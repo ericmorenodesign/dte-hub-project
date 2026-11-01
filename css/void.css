@@ -1,0 +1,267 @@
+﻿import * as THREE from 'three';
+
+export const NODES = [
+  {
+    roman: "I",
+    title: "SIMULACRA",
+    paths: ["assets/audio/simulacra.mp3", "assets/audio/simulacra.wav"],
+    tint: new THREE.Color(0x1f4232),
+    rim: new THREE.Color(0x88e0b8),
+    hex: "rgba(136, 224, 184, 0.55)",
+    targetRotY: -0.32,
+    targetRotX: -0.08,
+    cues: [
+      { t: 0, lyric: "Did you prepare the patient? Yes, we may begin the procedure." },
+      { t: 22, lyric: "I try to wake but dreams persist... my sanity and mind at risk" },
+      { t: 95, lyric: "In the depths of this maze, a glimmer of hope begins to blaze" },
+      { t: 155, lyric: "A bleeding machine... ghosts will inherit the Earth" }
+    ]
+  },
+  {
+    roman: "II",
+    title: "STARGAZE",
+    paths: ["assets/audio/stargaze.mp3", "assets/audio/stargaze.wav"],
+    tint: new THREE.Color(0x47321d),
+    rim: new THREE.Color(0xe0b478),
+    hex: "rgba(224, 180, 120, 0.55)",
+    targetRotY: -0.20,
+    targetRotX: 0.06,
+    cues: [
+      { t: 0, lyric: "Ladies and gentlemen, this is your captain speaking... next destination, the stars" },
+      { t: 33, lyric: "Close your eyes and you will see... shining worlds in you and me" },
+      { t: 98, lyric: "The opposition is at our gates... prepare for war" },
+      { t: 112, lyric: "Ready your arms, sound the alarms, we will defend this til we die" },
+      { t: 151, lyric: "I set my course where you cannot reach" },
+      { t: 178, lyric: "And through the void I am reborn" }
+    ]
+  },
+  {
+    roman: "III",
+    title: "IN DREAMS",
+    paths: ["assets/audio/in_dreams.mp3", "assets/audio/in dreams.mp3", "assets/audio/in_dreams.wav"],
+    tint: new THREE.Color(0x322344),
+    rim: new THREE.Color(0xb494e0),
+    hex: "rgba(180, 148, 224, 0.55)",
+    targetRotY: 0.0,
+    targetRotX: 0.0,
+    cues: [
+      { t: 0, lyric: "Enter my nightmare realm..." },
+      { t: 59, lyric: "In my dreams, I see you glowing, blooming in my arms, fragile rose" },
+      { t: 92, lyric: "Throes of sadness, bordering madness... my pale heart" },
+      { t: 196, lyric: "You reach for me, pull me under... into the void, we go beyond the mist" }
+    ]
+  },
+  {
+    roman: "IV",
+    title: "LOTUS",
+    paths: ["assets/audio/lotus.mp3", "assets/audio/lotus.wav"],
+    tint: new THREE.Color(0x423a20),
+    rim: new THREE.Color(0xdcc888),
+    hex: "rgba(220, 200, 136, 0.55)",
+    targetRotY: 0.18,
+    targetRotX: 0.07,
+    cues: [
+      { t: 0, lyric: "I close my eyes, hear the songs of the mad Gods cry..." },
+      { t: 94, lyric: "Detach and sink into insanity..." },
+      { t: 139, lyric: "With withered dreams am I still to love? Can my deep scars be beautiful?" },
+      { t: 194, lyric: "As the stars are blooming like the lotuses" }
+    ]
+  },
+  {
+    roman: "V",
+    title: "BLOODLUST",
+    paths: ["assets/audio/bloodlust.mp3", "assets/audio/bloodlust.wav"],
+    tint: new THREE.Color(0x45141c),
+    rim: new THREE.Color(0xd85868),
+    hex: "rgba(216, 88, 104, 0.55)",
+    targetRotY: 0.30,
+    targetRotX: -0.05,
+    cues:
+$proj = "E:\My Drive\DTE_Hub_Project"
+New-Item -ItemType Directory -Path "$proj\css", "$proj\js", "$proj\nodes" -Force | Out-Null
+
+# 1. Write css/void.css
+@'
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: #020204;
+  overflow: hidden;
+  font-family: 'Cinzel', serif;
+  cursor: crosshair;
+}
+
+#webglCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Ephemeral Track & Lyric Whispers */
+.void-whisper {
+  position: fixed;
+  top: 5.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 90%;
+  max-width: 760px;
+}
+
+.whisper-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.65em;
+  color: #c8c4d0;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+
+.whisper-title.active {
+  opacity: 0.58;
+}
+
+.whisper-lyric {
+  font-size: clamp(0.75rem, 1.15vw, 0.95rem);
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  color: rgba(235, 232, 245, 0.78);
+  text-shadow: 0 0 20px var(--node-glow, rgba(255, 255, 255, 0.4));
+  opacity: 0;
+  filter: blur(4px);
+  transition: opacity 1.4s ease, filter 1.4s ease;
+  min-height: 1.4em;
+}
+
+.whisper-lyric.active {
+  opacity: 0.78;
+  filter: blur(0px);
+}
+
+/* Bold Roman Numerals I - VII */
+.roman-nav {
+  position: fixed;
+  bottom: 6.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: clamp(28px, 4.5vw, 64px);
+  pointer-events: auto;
+  transition: opacity 1.0s ease, transform 1.0s ease;
+}
+
+body.realm-breached .roman-nav {
+  opacity: 0.22;
+}
+
+body.realm-breached .roman-nav:hover {
+  opacity: 0.9;
+}
+
+.roman-node {
+  background: none;
+  border: none;
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  letter-spacing: 0.12em;
+  color: rgba(160, 155, 175, 0.28);
+  cursor: pointer;
+  padding: 10px 8px;
+  transition: color 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), text-shadow 0.7s ease;
+  position: relative;
+}
+
+.roman-node:hover {
+  color: rgba(235, 232, 245, 0.78);
+  transform: translateY(-3px);
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.25);
+}
+
+.roman-node.active {
+  color: #ffffff;
+  transform: translateY(-4px);
+  text-shadow:
+    0 0 16px var(--node-glow, rgba(255, 255, 255, 0.6)),
+    0 0 36px var(--node-glow, rgba(255, 255, 255, 0.3));
+}
+
+.roman-node.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px #ffffff;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.roman-node.active.playing::after {
+  box-shadow: 0 0 14px #ffffff, 0 0 24px var(--node-glow, #ffffff);
+  transform: translateX(-50%) scale(1.35);
+}
+
+/* 1px Astral Seek Thread */
+.astral-thread-wrap {
+  position: fixed;
+  bottom: 2.2vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(460px, 68vw);
+  height: 14px;
+  display: flex;
+  align-items: center;
+  z-index: 3;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  pointer-events: auto;
+}
+
+.astral-thread-wrap.visible {
+  opacity: 0.45;
+}
+
+.astral-thread-wrap:hover {
+  opacity: 0.85;
+}
+
+.astral-thread-track {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  position: relative;
+}
+
+.astral-thread-fill {
+  height: 100%;
+  width: 0%;
+  background: #ffffff;
+  box-shadow: 0 0 10px #ffffff, 0 0 20px var(--node-glow, #ffffff);
+  position: relative;
+}

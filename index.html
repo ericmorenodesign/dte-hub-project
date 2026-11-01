@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DREAMS TO ETERNITY</title>
+  <link rel="stylesheet" href="css/void.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <div id="webglCanvas"></div>
+
+  <div class="void-whisper">
+    <span class="whisper-title" id="whisperTitle"></span>
+    <span class="whisper-lyric" id="whisperLyric"></span>
+  </div>
+
+  <!-- Simple Bold Roman Numerals I - VII -->
+  <nav class="roman-nav" id="romanNav">
+    <button class="roman-node" data-idx="0">I</button>
+    <button class="roman-node" data-idx="1">II</button>
+    <button class="roman-node active" data-idx="2">III</button>
+    <button class="roman-node" data-idx="3">IV</button>
+    <button class="roman-node" data-idx="4">V</button>
+    <button class="roman-node" data-idx="5">VI</button>
+    <button class="roman-node" data-idx="6">VII</button>
+  </nav>
+
+  <!-- Razor-thin 1px Astral Thread for scrubbing/seeking -->
+  <div class="astral-thread-wrap" id="threadWrap">
+    <div class="astral-thread-track">
+      <div class="astral-thread-fill" id="threadFill"></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/void-engine.js"></script>
+</body>
+</html>
