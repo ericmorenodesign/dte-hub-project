@@ -3,7 +3,7 @@
 export class AudioNexus {
   constructor(onNodeChanged) {
     this.onNodeChanged = onNodeChanged;
-    this.activeIdx = 2; // Default III: IN DREAMS
+    this.activeIdx = 0; // Default I: SIMULACRA
     this.activeNode = NODES[this.activeIdx];
 
     this.audioCtx = null;
@@ -25,7 +25,7 @@ export class AudioNexus {
 
     this.initListeners();
     setTimeout(() => {
-      this.showTitleWhisper("TOUCH CRYSTAL OR NUMERALS I – VII TO AWAKEN SOUND", 5000);
+      this.showTitleWhisper("DRAG CRYSTAL TO SCRY THE VOID  ·  CLICK TO ENTER REALM I", 5200);
     }, 500);
   }
 
@@ -128,17 +128,24 @@ export class AudioNexus {
     this.updateRomanNavUI();
   }
 
-  getBassEnergy(elapsedTime) {
-    let bass = 0;
+  getSpectrum(elapsedTime) {
+    let bass = 0, mid = 0, high = 0;
     if (this.analyser && this.dataArray && !this.audioElement.paused) {
       this.analyser.getByteFrequencyData(this.dataArray);
       for (let i = 0; i < 10; i++) bass += this.dataArray[i];
       bass /= (10 * 255);
+      for (let i = 10; i < 45; i++) mid += this.dataArray[i];
+      mid /= (35 * 255);
+      for (let i = 45; i < 100; i++) high += this.dataArray[i];
+      high /= (55 * 255);
+
       if (bass < 0.01 && window.location.protocol === 'file:') {
         bass = 0.22 + Math.sin(elapsedTime * 6.5) * 0.12 + Math.pow(Math.sin(elapsedTime * 2.1), 4.0) * 0.25;
+        mid = 0.18 + Math.sin(elapsedTime * 8.2) * 0.10;
+        high = 0.14 + Math.cos(elapsedTime * 11.4) * 0.10;
       }
     }
-    return bass;
+    return { bass, mid, high };
   }
 
   initListeners() {

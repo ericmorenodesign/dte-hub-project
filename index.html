@@ -23,6 +23,7 @@ html, body {
   overflow: hidden;
   font-family: 'Cinzel', serif;
   cursor: crosshair;
+  touch-action: none;
 }
 
 #webglCanvas {
@@ -81,7 +82,7 @@ html, body {
   filter: blur(0px);
 }
 
-/* Etched-Inside-Crystal Projection (Appears when inspecting a Memory Shard inside the Realm) */
+/* Etched-Inside-Crystal Projection with Audio-Reactive Signal Interference */
 .crystal-projection {
   position: fixed;
   inset: 0;
@@ -95,7 +96,7 @@ html, body {
   opacity: 0;
   filter: blur(12px);
   transform: scale(0.94);
-  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .crystal-projection.manifest {
@@ -105,12 +106,30 @@ html, body {
   pointer-events: auto;
 }
 
+/* Subtle scanline interference veil during transmission playback */
+.crystal-projection.manifest::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.0) 0px,
+    rgba(255, 255, 255, 0.0) 2px,
+    rgba(136, 224, 184, var(--static-alpha, 0.015)) 3px,
+    rgba(0, 0, 0, 0.12) 4px
+  );
+  opacity: calc(0.35 + var(--static-burst, 0) * 0.65);
+  mix-blend-mode: screen;
+}
+
 .projection-inner {
-  max-width: 640px;
+  max-width: 650px;
   width: 100%;
   text-align: center;
   position: relative;
   padding: 20px;
+  transform: translate(var(--glitch-x, 0px), var(--glitch-y, 0px)) skewX(var(--glitch-skew, 0deg));
 }
 
 .projection-tag {
@@ -131,25 +150,28 @@ html, body {
   letter-spacing: 0.38em;
   color: #ffffff;
   text-shadow:
-    -2px 0 12px rgba(255, 60, 100, 0.35),
-    2px 0 12px rgba(0, 230, 255, 0.35),
+    calc(-2px - var(--chroma-shift, 0px)) 0 12px rgba(255, 45, 95, 0.55),
+    calc(2px + var(--chroma-shift, 0px)) 0 12px rgba(0, 235, 255, 0.55),
     0 0 32px var(--node-glow, rgba(255, 255, 255, 0.5));
   margin-bottom: 26px;
 }
 
 .projection-body {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.02rem, 1.35vw, 1.24rem);
+  font-size: clamp(1.04rem, 1.35vw, 1.26rem);
   line-height: 1.85;
   letter-spacing: 0.06em;
-  color: rgba(235, 232, 245, 0.88);
+  color: rgba(235, 232, 245, 0.90);
   text-shadow:
+    calc(-1px - var(--chroma-shift, 0px) * 0.4) 0 8px rgba(255, 45, 95, 0.32),
+    calc(1px + var(--chroma-shift, 0px) * 0.4) 0 8px rgba(0, 235, 255, 0.32),
     0 0 14px rgba(0, 0, 0, 0.95),
     0 0 28px var(--node-glow, rgba(255, 255, 255, 0.35));
   max-height: 54vh;
   overflow-y: auto;
   scrollbar-width: none;
   white-space: pre-line;
+  touch-action: pan-y;
 }
 
 .projection-body::-webkit-scrollbar {
@@ -207,7 +229,7 @@ html, body {
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.42em;
-  color: rgba(220, 218, 230, 0.42);
+  color: rgba(220, 218, 230, 0.45);
   text-shadow: 0 0 12px rgba(0, 0, 0, 0.95);
   white-space: nowrap;
   transition: color 0.4s ease, opacity 0.5s ease, text-shadow 0.4s ease, transform 0.4s ease;
@@ -233,13 +255,13 @@ html, body {
   z-index: 3;
   display: flex;
   align-items: center;
-  gap: clamp(28px, 4.5vw, 64px);
+  gap: clamp(24px, 4.5vw, 64px);
   pointer-events: auto;
   transition: opacity 1.0s ease, transform 1.0s ease;
 }
 
 body.realm-breached .roman-nav {
-  opacity: 0.28;
+  opacity: 0.32;
 }
 
 body.realm-breached .roman-nav:hover {
@@ -371,11 +393,11 @@ body.realm-breached .roman-nav:hover {
     </div>
   </div>
 
-  <!-- Simple Bold Roman Numerals I - VII -->
+  <!-- Simple Bold Roman Numerals I - VII (Default active: I SIMULACRA) -->
   <nav class="roman-nav" id="romanNav">
-    <button class="roman-node" data-idx="0">I</button>
+    <button class="roman-node active" data-idx="0">I</button>
     <button class="roman-node" data-idx="1">II</button>
-    <button class="roman-node active" data-idx="2">III</button>
+    <button class="roman-node" data-idx="2">III</button>
     <button class="roman-node" data-idx="3">IV</button>
     <button class="roman-node" data-idx="4">V</button>
     <button class="roman-node" data-idx="5">VI</button>
