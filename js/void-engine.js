@@ -16,6 +16,9 @@ let glitchScaleW = 1.0;
 let glitchHoldFrames = 0;
 let glitchCooldown = 0;
 
+// Step 3: Chrono-time accumulator (allows Chrysalis to freeze/reverse time on bass hits)
+let realmTime = 0.0;
+
 const audioNexus = new AudioNexus((node, idx) => {
   gravityWaveBoost = 1.0;
   if (focusedShardIdx !== -1) closeShardProjection();
@@ -140,6 +143,7 @@ const floorFragmentShader = `
   uniform vec3 uMouseWorld;
   uniform vec2 uSigilTilt;
   uniform float uBassWave;
+  uniform float uFogDensity;
   varying vec3 vWorldPos;
 
   float hash(vec2 p) {
@@ -196,9 +200,9 @@ const floorFragmentShader = `
 
     float alpha = smoothstep(0.22, 0.85, combined) * roomFade * (0.45 + 0.55 * underSigilVoid);
     alpha *= (1.0 - mousePush * 0.48);
-    alpha *= (0.22 - uLayer * 0.032);
+    alpha *= (0.22 - uLayer * 0.032) * uFogDensity;
 
-    gl_FragColor = vec4(fogCol, clamp(alpha, 0.0, 0.42));
+    gl_FragColor = vec4(fogCol, clamp(alpha, 0.0, 0.52));
   }
 `;
 
@@ -225,7 +229,8 @@ for (let i = 0; i < 5; i++) {
       uRim: { value: audioNexus.activeNode.rim.clone() },
       uMouseWorld: { value: new THREE.Vector3(0, -1.45, 0) },
       uSigilTilt: { value: new THREE.Vector2(0, 0) },
-      uBassWave: { value: 0 }
+      uBassWave: { value: 0 },
+      uFogDensity: { value: 1.0 }
     },
     vertexShader: floorVertexShader,
     fragmentShader: floorFragmentShader
@@ -274,7 +279,7 @@ const pMat = new THREE.ShaderMaterial({
       vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
       gl_PointSize = aSize * (1.0 / max(0.5, -mvPosition.z));
       float distFade = smoothstep(14.0, 2.0, length(mvPosition.xyz));
-      vAlpha = distFade * 0.08;
+      vAlpha = distFade * 0.085;
       gl_Position = projectionMatrix * mvPosition;
     }
   `,
@@ -500,7 +505,7 @@ sigilGroup.add(sigilFrontMesh);
 sigilGroup.add(sigilGhostMesh);
 
 // ============================================================================
-// 7. BUILD THE ENCOMPASSING 360° QUANTUM REFRACTION REALM + TRAPPED-IN-GLASS RELIC
+// 7. BUILD THE ENCOMPASSING 360° QUANTUM REFRACTION REALM
 // ============================================================================
 const quantumRealmGroup = new THREE.Group();
 quantumRealmGroup.position.set(0, 0.1, -3.5);
@@ -557,7 +562,12 @@ for (let i = 0; i < 8; i++) {
   holder.add(bM);
   holder.add(fM);
   quantumRealmGroup.add(holder);
-  wallMirrors.push({ holder, bM, fM, baseAng: ang });
+  wallMirrors.push({
+    holder, bM, fM, baseAng: ang,
+    curRad: 4.2,
+    curY: 0.25 + (i % 2 === 0 ? 0.4 : -0.3),
+    curTiltX: 0.0
+  });
 }
 
 // The 4 Interactive Refractive Memory Monoliths
@@ -621,8 +631,7 @@ for (let i = 0; i < 4; i++) {
 }
 
 // ============================================================================
-// 8. "TRAPPED-IN-GLASS" 3D HOLOGRAPHIC RELIC CORE INSIDE SHARD IV (memoryShards[3])
-// Rendered into Pass 1 (envTarget) so the front glass facet of Shard IV bends & refracts the artwork in 3D!
+// 8. CLEAN CRT PHOSPHOR / INK RELIC SHADER INSIDE SHARD IV (NO CHEESY TARGET RINGS)
 // ============================================================================
 const relicCoreCanvas = document.createElement('canvas');
 relicCoreCanvas.width = 512;
@@ -631,7 +640,6 @@ const relicCoreCtx = relicCoreCanvas.getContext('2d');
 const relicCoreTex = new THREE.CanvasTexture(relicCoreCanvas);
 
 const relicCoreGeo = new THREE.ShapeGeometry(shardShape);
-// Compute UVs mapped to [-sw..sw, -sh..sh]
 const posAttr = relicCoreGeo.attributes.position;
 const uvs = new Float32Array(posAttr.count * 2);
 for (let i = 0; i < posAttr.count; i++) {
@@ -671,31 +679,36 @@ const relicCoreMat = new THREE.ShaderMaterial({
     varying vec2 vUv;
     varying vec3 vViewDir;
 
+    float hash(vec2 p) {
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+    }
+
     void main() {
-      // Multi-layer 3D depth parallax inside the crystal based on viewing angle
-      vec2 parallaxUv = vUv + vViewDir.xy * 0.065;
-      vec3 artCol = texture2D(uArtTex, clamp(parallaxUv, 0.01, 0.99)).rgb;
+      // 3D depth parallax inside the crystal based on viewing angle
+      vec2 parallaxUv = vUv + vViewDir.xy * 0.055;
+      // Subtle RGB CRT sub-pixel separation on bass hits
+      float crtShift = 0.003 + uBass * 0.008;
+      vec3 artCol;
+      artCol.r = texture2D(uArtTex, clamp(parallaxUv + vec2(crtShift, 0.0), 0.01, 0.99)).r;
+      artCol.g = texture2D(uArtTex, clamp(parallaxUv, 0.01, 0.99)).g;
+      artCol.b = texture2D(uArtTex, clamp(parallaxUv - vec2(crtShift, 0.0), 0.01, 0.99)).b;
 
-      // Ghostly second depth-echo layer deeper inside the ice
-      vec2 deepUv = vUv - vViewDir.xy * 0.045;
-      vec3 deepCol = texture2D(uArtTex, clamp(deepUv, 0.01, 0.99)).rgb * uRimColor;
+      // Authentic analog CRT phosphor scanline + gritty zine ink grain
+      float scanline = 0.88 + 0.12 * sin(vUv.y * 240.0);
+      float filmGrain = (hash(vUv * 200.0 + uTime) - 0.5) * 0.08;
 
-      // Vignette fade near the crystal bevel edges
-      float edgeFade = smoothstep(0.50, 0.18, length(vUv - 0.5));
-      float scanPulse = 0.85 + 0.15 * sin(vUv.y * 40.0 - uTime * 3.0);
-
-      vec3 finalCol = (artCol * 0.95 + deepCol * (0.45 + uBass * 0.6)) * scanPulse;
-      gl_FragColor = vec4(finalCol, edgeFade * uOpacity * (0.72 + uBass * 0.28));
+      float edgeFade = smoothstep(0.50, 0.16, length(vUv - 0.5));
+      vec3 finalCol = (artCol + filmGrain) * scanline;
+      gl_FragColor = vec4(finalCol, edgeFade * uOpacity * (0.78 + uBass * 0.22));
     }
   `
 });
 
 const relicCoreMesh = new THREE.Mesh(relicCoreGeo, relicCoreMat);
 relicCoreMesh.scale.set(0.92, 0.92, 1.0);
-relicCoreMesh.position.set(0, 0, -0.01); // Suspended right inside the center of Shard IV!
+relicCoreMesh.position.set(0, 0, -0.01);
 memoryShards[3].holder.add(relicCoreMesh);
 
-// Procedural + Image-Backed Relic Texture Generator
 const loadedArtImages = new Map();
 
 function renderArtworkToCanvas(ctx, W, H, node, shard, t, bass, parallaxX = 0, parallaxY = 0) {
@@ -705,15 +718,18 @@ function renderArtworkToCanvas(ctx, W, H, node, shard, t, bass, parallaxX = 0, p
   const g = Math.floor(node.rim.g * 255);
   const b = Math.floor(node.rim.b * 255);
 
-  // Dark atmospheric radial base
-  const grad = ctx.createRadialGradient(W * 0.5 + parallaxX * 18, H * 0.5 + parallaxY * 18, 10, W * 0.5, H * 0.5, W * 0.48);
-  grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.28)`);
-  grad.addColorStop(0.6, `rgba(${Math.floor(node.tint.r * 255)}, ${Math.floor(node.tint.g * 255)}, ${Math.floor(node.tint.b * 255)}, 0.45)`);
-  grad.addColorStop(1, 'rgba(2, 2, 4, 0.0)');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, W, H);
+  // Hexagonal Crystal Facet Clip Mask (Clean, no cheesy circles!)
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(W * 0.5, H * 0.02);
+  ctx.lineTo(W * 0.94, H * 0.23);
+  ctx.lineTo(W * 0.88, H * 0.80);
+  ctx.lineTo(W * 0.5, H * 0.98);
+  ctx.lineTo(W * 0.12, H * 0.80);
+  ctx.lineTo(W * 0.06, H * 0.23);
+  ctx.closePath();
+  ctx.clip();
 
-  // Check if the concept art image file is loaded (from assets/img/*.jpg or drag-and-drop)
   let drewImage = false;
   if (shard && shard.artImage) {
     if (!loadedArtImages.has(shard.artImage)) {
@@ -725,85 +741,60 @@ function renderArtworkToCanvas(ctx, W, H, node, shard, t, bass, parallaxX = 0, p
     }
     const img = loadedArtImages.get(shard.artImage);
     if (img && img.complete && img.naturalWidth > 0) {
-      ctx.save();
-      // Hexagonal crystal facet clip mask
-      ctx.beginPath();
-      ctx.moveTo(W * 0.5, H * 0.03);
-      ctx.lineTo(W * 0.93, H * 0.24);
-      ctx.lineTo(W * 0.87, H * 0.79);
-      ctx.lineTo(W * 0.5, H * 0.97);
-      ctx.lineTo(W * 0.13, H * 0.79);
-      ctx.lineTo(W * 0.07, H * 0.24);
-      ctx.closePath();
-      ctx.clip();
-
-      // 3D Parallax shift on the artwork inside the crystal facet
-      const scale = 1.08 + bass * 0.04;
+      const scale = 1.06 + bass * 0.03;
       const dw = W * scale;
       const dh = H * scale;
-      const dx = (W - dw) * 0.5 + parallaxX * 22;
-      const dy = (H - dh) * 0.5 + parallaxY * 22;
+      const dx = (W - dw) * 0.5 + parallaxX * 18;
+      const dy = (H - dh) * 0.5 + parallaxY * 18;
       ctx.drawImage(img, dx, dy, dw, dh);
-
-      // Subtle crystalline bevel inner-glow overlay
-      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${0.55 + bass * 0.4})`;
-      ctx.lineWidth = 4.0;
-      ctx.stroke();
-      ctx.restore();
       drewImage = true;
     }
   }
 
-  // Sacred Crystalline Overlay / Procedural Relic Fallback
-  ctx.save();
-  ctx.translate(W * 0.5 + parallaxX * 10, H * 0.5 + parallaxY * 10);
-
-  ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${drewImage ? 0.22 : 0.42})`;
-  ctx.lineWidth = 1.5;
-  for (let rad of [195, 155, 112]) {
-    ctx.beginPath();
-    ctx.arc(0, 0, rad + bass * 8, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-
-  for (let i = 0; i < 12; i++) {
-    const ang = (i / 12) * Math.PI * 2 + t * 0.12;
-    ctx.beginPath();
-    ctx.moveTo(Math.cos(ang) * 112, Math.sin(ang) * 112);
-    ctx.lineTo(Math.cos(ang) * 195, Math.sin(ang) * 195);
-    ctx.stroke();
-  }
-
   if (!drewImage) {
-    ctx.strokeStyle = `rgba(255, 255, 255, 0.88)`;
-    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.16)`;
-    ctx.lineWidth = 2.2;
+    // Gritty CRT / Ink Sigil fallback if image isn't saved into assets/img/ yet
+    ctx.fillStyle = '#040407';
+    ctx.fillRect(0, 0, W, H);
+    ctx.save();
+    ctx.translate(W * 0.5 + parallaxX * 10, H * 0.5 + parallaxY * 10);
+    ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.85)`;
+    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.12)`;
+    ctx.lineWidth = 2.0;
     ctx.shadowColor = `rgb(${r}, ${g}, ${b})`;
-    ctx.shadowBlur = 18;
+    ctx.shadowBlur = 16;
     ctx.beginPath();
     SIGIL_OUTLINE.forEach(([px, py], idx) => {
-      const sx = (px - 500) * 0.36;
-      const sy = (py - 485) * 0.36;
+      const sx = (px - 500) * 0.38;
+      const sy = (py - 485) * 0.38;
       if (idx === 0) ctx.moveTo(sx, sy);
       else ctx.lineTo(sx, sy);
     });
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
+    ctx.restore();
   }
 
+  // Subtle CRT scanline texture overlay across the crystal facet
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+  for (let y = 0; y < H; y += 3) {
+    ctx.fillRect(0, y, W, 1);
+  }
+
+  // Razor-thin crystal bevel border
+  ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${0.45 + bass * 0.35})`;
+  ctx.lineWidth = 3.0;
+  ctx.stroke();
   ctx.restore();
 }
 
 function updateRelicCoreTexture(nodeIdx) {
   const node = NODES[nodeIdx];
   if (!node || !node.shards) return;
-  const relicShard = node.shards[3];
-  renderArtworkToCanvas(relicCoreCtx, 512, 512, node, relicShard, performance.now() * 0.001, 0);
+  renderArtworkToCanvas(relicCoreCtx, 512, 512, node, node.shards[3], performance.now() * 0.001, 0);
   relicCoreTex.needsUpdate = true;
 }
 
-// Initialize Shard IV texture for Node I (Simulacra)
 updateRelicCoreTexture(0);
 
 // ============================================================================
@@ -857,7 +848,7 @@ projOverlayEl.addEventListener('click', (e) => {
   if (e.target === projOverlayEl) closeShardProjection();
 });
 
-// Allow dragging & dropping any Concept Art image (.jpg/.png) onto the browser to preview it live inside Shard IV!
+// Drag & Drop any image (.jpg/.png) onto the browser to inject it into the active realm's Visual Relic Shard!
 window.addEventListener('drop', (e) => {
   const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
   if (file && file.type.startsWith('image/')) {
@@ -1022,19 +1013,32 @@ window.addEventListener('resize', () => {
 });
 
 // ============================================================================
-// 11. MAIN LOOP
+// 11. MAIN LOOP: STEP 3 PER-REALM ATMOSPHERIC PHYSICS & QUANTUM CHAMBER
 // ============================================================================
 const clock = new THREE.Clock();
+let prevTime = 0;
 let prevBass = 0;
 
 function animate() {
   requestAnimationFrame(animate);
-  const t = clock.getElapsedTime();
+  const rawT = clock.getElapsedTime();
+  const dt = Math.min(0.05, rawT - prevTime);
+  prevTime = rawT;
+
+  const activeIdx = audioNexus.activeIdx;
   const activeNode = audioNexus.activeNode;
 
-  const bass = audioNexus.getBassEnergy(t);
+  const bass = audioNexus.getBassEnergy(rawT);
   const bassDelta = Math.max(0, bass - prevBass);
   prevBass = bass;
+
+  // Step 3: In Realm VI (CHRYSALIS), strong bass transients fracture time (briefly freezing/reversing realmTime!)
+  let timeScale = 1.0;
+  if (activeIdx === 5) {
+    timeScale = (bass > 0.36) ? -0.55 : 0.38;
+  }
+  realmTime += dt * timeScale;
+  const t = realmTime;
 
   gravityWaveBoost *= 0.95;
   const totalPulse = Math.min(1.2, bass * 1.15 + gravityWaveBoost * 0.6);
@@ -1088,7 +1092,7 @@ function animate() {
     lookGoalZ = worldShardPos.z;
 
     if (activeNode.shards[focusedShardIdx] && activeNode.shards[focusedShardIdx].isArt) {
-      renderArtworkToCanvas(projArtCtx, projArtCanvas.width, projArtCanvas.height, activeNode, activeNode.shards[focusedShardIdx], t, bass, smoothMouseNDC.x, smoothMouseNDC.y);
+      renderArtworkToCanvas(projArtCtx, projArtCanvas.width, projArtCanvas.height, activeNode, activeNode.shards[focusedShardIdx], rawT, bass, smoothMouseNDC.x, smoothMouseNDC.y);
     }
   }
 
@@ -1135,17 +1139,57 @@ function animate() {
   wallBackMat.uniforms.uOpacity.value = realmFade * 0.55;
   wallFrontMat.uniforms.uOpacity.value = realmFade * 0.55;
 
+  // ============================================================================
+  // STEP 3A: PER-REALM ARCHITECTURAL BEHAVIOR OF THE 8 SURROUNDING MIRROR WALLS
+  // ============================================================================
   wallMirrors.forEach((wm, i) => {
-    const ang = wm.baseAng + t * 0.025;
-    const rad = 4.2 + Math.sin(t * 0.5 + i) * 0.15;
-    wm.holder.position.x = Math.cos(ang) * rad;
-    wm.holder.position.z = Math.sin(ang) * rad;
+    const orbitSpeed = (activeIdx === 1) ? 0.055 : (activeIdx === 4 ? 0.015 : 0.025);
+    const ang = wm.baseAng + t * orbitSpeed;
+
+    let goalRad = 4.2 + Math.sin(t * 0.5 + i) * 0.15;
+    let goalY = 0.25 + (i % 2 === 0 ? 0.4 : -0.3);
+    let goalTiltX = 0.0;
+
+    if (activeIdx === 0) {
+      // I. SIMULACRA: Staggered surgical scanner corridors
+      goalRad = 3.9 + (i % 2) * 0.65;
+    } else if (activeIdx === 1) {
+      // II. STARGAZE: Flared open slipgate aperture
+      goalRad = 4.65 + totalPulse * 0.35;
+      goalTiltX = -0.22;
+    } else if (activeIdx === 2) {
+      // III. IN DREAMS: Submerged slow-swaying dream monoliths
+      goalY += Math.sin(t * 0.65 + i * 0.9) * 0.35;
+      goalTiltX = Math.sin(t * 0.4 + i) * 0.12;
+    } else if (activeIdx === 3) {
+      // IV. LOTUS: Outward-blooming lotus mandala petals
+      goalRad = 4.35;
+      goalTiltX = -0.34;
+    } else if (activeIdx === 4) {
+      // V. BLOODLUST: Claustrophobic crimson cathedral cage closing in on the viewer!
+      goalRad = 3.15 - Math.sin(rawT * 0.8) * 0.22 - totalPulse * 0.35;
+      goalTiltX = 0.28 + totalPulse * 0.12;
+    } else if (activeIdx === 5) {
+      // VI. CHRYSALIS: Suspended hourglass ring
+      goalRad = 3.85;
+      goalTiltX = (i % 2 === 0 ? 0.25 : -0.25);
+    } else if (activeIdx === 6) {
+      // VII. MOON: Zero-gravity levitating astral ring high above the water
+      goalRad = 4.5;
+      goalY = 0.55 + Math.sin(rawT * 0.4 + i * 1.1) * 0.45;
+    }
+
+    wm.curRad += (goalRad - wm.curRad) * 0.04;
+    wm.curY += (goalY - wm.curY) * 0.04;
+    wm.curTiltX += (goalTiltX - wm.curTiltX) * 0.04;
+
+    wm.holder.position.set(Math.cos(ang) * wm.curRad, wm.curY, Math.sin(ang) * wm.curRad);
     wm.holder.lookAt(0, 0.1, 0);
+    wm.holder.rotateX(wm.curTiltX);
   });
 
-  // Update the 3D Holographic Relic Core inside Shard IV
   relicCoreMat.uniforms.uRimColor.value.lerp(activeNode.rim, 0.05);
-  relicCoreMat.uniforms.uTime.value = t;
+  relicCoreMat.uniforms.uTime.value = rawT;
   relicCoreMat.uniforms.uBass.value = totalPulse;
   relicCoreMat.uniforms.uOpacity.value = realmFade;
 
@@ -1153,8 +1197,8 @@ function animate() {
     const isHov = (hoveredMemoryShard === ms) || (focusedShardIdx === i);
     ms.hoverVal += ((isHov ? 1.0 : 0.0) - ms.hoverVal) * 0.12;
 
-    ms.holder.position.y = ms.basePos.y + Math.sin(t * 0.8 + i * 1.4) * 0.05 + ms.hoverVal * 0.06;
-    ms.holder.rotation.y = ms.baseRot.y + Math.sin(t * 0.4 + i) * 0.06;
+    ms.holder.position.y = ms.basePos.y + Math.sin(rawT * 0.8 + i * 1.4) * 0.05 + ms.hoverVal * 0.06;
+    ms.holder.rotation.y = ms.baseRot.y + Math.sin(rawT * 0.4 + i) * 0.06;
 
     ms.bMat.uniforms.uOpacity.value = realmFade;
     ms.fMat.uniforms.uOpacity.value = realmFade;
@@ -1188,6 +1232,8 @@ function animate() {
   backMistMat.uniforms.uGravityPulse.value = totalPulse;
   backMistMat.uniforms.uDive.value = diveCurrent;
 
+  // Step 3B: Floor Mist Density & Arterial Pulse (Thicker in In Dreams & Bloodlust, thinner in zero-G Moon)
+  const targetFogDensity = (activeIdx === 4) ? (1.25 + totalPulse * 0.45) : (activeIdx === 6 ? 0.55 : 1.0);
   floorLayers.forEach(mat => {
     mat.uniforms.uTime.value = t;
     mat.uniforms.uTint.value.lerp(activeNode.tint, 0.03);
@@ -1195,10 +1241,14 @@ function animate() {
     mat.uniforms.uMouseWorld.value.copy(smoothMouse3D);
     mat.uniforms.uSigilTilt.value.set(currentRotY * 0.8, currentRotX * 0.8);
     mat.uniforms.uBassWave.value = totalPulse;
+    mat.uniforms.uFogDensity.value += (targetFogDensity - mat.uniforms.uFogDensity.value) * 0.04;
   });
 
   pMat.uniforms.uColor.value.lerp(activeNode.rim, 0.03);
 
+  // ============================================================================
+  // STEP 3C: PER-REALM PARTICLE PHYSICS (7 STATES OF MATTER)
+  // ============================================================================
   const posArr = pGeo.attributes.position.array;
   for (let i = 0; i < PARTICLE_COUNT; i++) {
     const i3 = i * 3;
@@ -1206,13 +1256,53 @@ function animate() {
     let py = posArr[i3 + 1];
     let pz = posArr[i3 + 2];
 
-    px += pVelocities[i3];
-    py += pVelocities[i3 + 1];
-    pz += pVelocities[i3 + 2];
+    if (activeIdx === 0) {
+      // I. SIMULACRA: Clinical horizontal data-stream drift + sudden lateral phase-snaps on bass
+      px += pVelocities[i3] * 1.8 + (glitchHoldFrames > 0 && i % 7 === 0 ? glitchShearX * 0.6 : 0);
+      py += pVelocities[i3 + 1] * 0.7;
+      pz += pVelocities[i3 + 2];
+    } else if (activeIdx === 1) {
+      // II. STARGAZE: High-velocity slipgate embers streaking past the chamber
+      px += pVelocities[i3] * 2.2;
+      py += Math.abs(pVelocities[i3 + 1]) * (0.8 + totalPulse * 1.5);
+      pz += 0.012 + totalPulse * 0.025;
+    } else if (activeIdx === 2) {
+      // III. IN DREAMS: Reverse-gravity bioluminescent violet spores floating UPWARD from the floor mist
+      px += pVelocities[i3] + Math.sin(rawT * 0.8 + i) * 0.0015;
+      py += Math.abs(pVelocities[i3 + 1]) * 1.35 + 0.0018;
+      pz += pVelocities[i3 + 2];
+    } else if (activeIdx === 3) {
+      // IV. LOTUS: Golden kintsugi motes spiraling gently upward in a mandala vortex
+      const dxC = px;
+      const dzC = pz + 3.5 * diveCurrent;
+      px += -dzC * 0.0018 + pVelocities[i3] * 0.5;
+      pz += dxC * 0.0018 + pVelocities[i3 + 2] * 0.5;
+      py += Math.abs(pVelocities[i3 + 1]) * 0.85 + 0.0008;
+    } else if (activeIdx === 4) {
+      // V. BLOODLUST: Heavy ash & blood-mist pulled inward toward the chamber center on breakdowns
+      const dxC = px;
+      const dzC = pz + 3.5 * diveCurrent;
+      px += pVelocities[i3] - dxC * 0.0015 * totalPulse;
+      py += pVelocities[i3 + 1] * 1.4 - totalPulse * 0.004;
+      pz += pVelocities[i3 + 2] - dzC * 0.0015 * totalPulse;
+    } else if (activeIdx === 5) {
+      // VI. CHRYSALIS: Slow-motion falling ash that freezes & reverses upward when bass fractures time!
+      px += pVelocities[i3] * timeScale;
+      py += pVelocities[i3 + 1] * 1.2 * timeScale;
+      pz += pVelocities[i3 + 2] * timeScale;
+    } else {
+      // VII. MOON: True Zero-Gravity weightless astral suspension
+      px += pVelocities[i3] * 0.4;
+      py += Math.sin(rawT * 0.6 + i * 0.7) * 0.0012;
+      pz += pVelocities[i3 + 2] * 0.4;
+    }
 
     if (py < -1.70) {
-      py = -1.70 + Math.random() * 0.05;
-      pVelocities[i3] += (Math.random() - 0.5) * 0.001;
+      py = (activeIdx === 2 || activeIdx === 3) ? -1.68 : (-1.70 + Math.random() * 0.05);
+      if (activeIdx === 5 && timeScale > 0) py = 2.35;
+    }
+    if (py > 2.4) {
+      py = -1.68;
     }
 
     const dxM = px - smoothMouse3D.x;
@@ -1229,7 +1319,6 @@ function animate() {
     if (px < -7) px = 7;
     if (pz > 5) pz = -11;
     if (pz < -11) pz = 5;
-    if (py > 2.4) py = -1.65;
 
     posArr[i3]     = px;
     posArr[i3 + 1] = py;
@@ -1248,7 +1337,7 @@ function animate() {
   ];
 
   allMats.forEach(mat => {
-    mat.uniforms.uTime.value = t;
+    mat.uniforms.uTime.value = rawT;
     mat.uniforms.uBass.value = totalPulse;
     mat.uniforms.uGlitchSliceY.value = glitchSliceY;
     mat.uniforms.uGlitchSliceDir.value = glitchSliceDir;
@@ -1258,7 +1347,7 @@ function animate() {
     mat.uniforms.uLightPos.value.set(lightX, lightY, lightZ);
   });
 
-  // PASS 1: Render room, mist, quantum cage, internal back-bevels, AND the Trapped-in-Glass Relic Core (relicCoreMesh) into envTarget!
+  // PASS 1: Render room, mist, quantum cage, internal back-bevels, AND the Trapped-in-Glass Relic Core into envTarget
   relicCoreMesh.visible = quantumRealmGroup.visible;
   sigilFrontMesh.visible = false;
   sigilBackMesh.visible = sigilGroup.visible;
@@ -1268,7 +1357,7 @@ function animate() {
   renderer.setRenderTarget(envTarget);
   renderer.render(scene, camera);
 
-  // PASS 2: Hide relicCoreMesh so it is ONLY visible refracted *inside* Shard IV's front crystal face!
+  // PASS 2: Hide relicCoreMesh so it is ONLY visible refracted inside Shard IV's front crystal face
   relicCoreMesh.visible = false;
   sigilFrontMesh.visible = sigilGroup.visible;
   wallMirrors.forEach(wm => { wm.fM.visible = quantumRealmGroup.visible; });
