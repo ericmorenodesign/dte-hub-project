@@ -114,7 +114,7 @@ Ghosts will inherit the Earth.`
       { label: "I · CAPTAIN'S LOG", tag: "FLIGHT DECK TELEMETRY // VOYAGER VESSEL", heading: "CAPTAIN'S INTERCOM", body: `"Ladies and gentlemen, this is your captain speaking... Next destination, the stars."\n\nHull breach alarms sounding across the outer ring. The opposition has reached the slipgate perimeter.` },
       { label: "II · SIEGE TRANSMITTAL", tag: "DEFENSE GRID // 01:52", heading: "THE GATES OF ORION", body: `"Mission accomplished, but the opposition's at our gates. Prepare for war."\n\nAll surviving anchors of light are ordered to hold the astral threshold until rebirth protocol completes.` },
       { label: "III · LYRIC INSCRIPTION", tag: "REALM II CODEX", heading: "STARGAZE", body: `Close your eyes and you will see\nShining worlds in you and me\nReady your arms, sound the alarms\nWe will defend this til we die\n\nI set my course where you can't reach\nThese rising tides won't swallow me\nAnd through the void I am reborn\nThese walls you build won't last for long.` },
-      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM II", heading: "ASTRAL COMPASS", isArt: true, body: `The solar astrolabe locked onto the undying horizon beyond the siege.` }
+      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM II", heading: "ASTRAL COMPASS", isArt: true, artImage: "assets/img/stargaze.jpg", body: `The solar astrolabe locked onto the undying horizon beyond the siege.` }
     ]
   },
   {
@@ -136,7 +136,7 @@ Ghosts will inherit the Earth.`
       { label: "I · SOMNIA LOG", tag: "THRESHOLD ARCHIVE // VEIL CROSSING", heading: "BEYOND THE MIST", body: `Between monochrome decay and blooming violet starlight, the veil thins whenever two dreamers align across the abyss.` },
       { label: "II · ECHO FRAGMENT", tag: "PALE HEART RECORDING", heading: "THE FRAGILE ROSE", body: `Whatwithers in waking shadow blooms untouched inside the refractive glass of the dream.` },
       { label: "III · LYRIC INSCRIPTION", tag: "REALM III CODEX", heading: "IN DREAMS", body: `Enter my nightmare realm, dark gods arise...\nIn my dreams, I see you, glowing, blooming in my arms, fragile rose\nLift the veil for us to see what lies inside this dream\nYou reach for me, pull me under, into the void, we go beyond the mist.` },
-      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM III", heading: "THE VIOLET VEIL", isArt: true, body: `Refracted silhouette of the fragile rose blooming inside the void.` }
+      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM III", heading: "THE VIOLET VEIL", isArt: true, artImage: "assets/img/in_dreams.jpg", body: `Refracted silhouette of the fragile rose blooming inside the void.` }
     ]
   },
   {
@@ -158,7 +158,7 @@ Ghosts will inherit the Earth.`
       { label: "I · KINTSUGI CODEX", tag: "SANCTUARY OF RESTORATION", heading: "GOLDEN FRACTURES", body: `Where the crystal breaks, molten starlight fills the seam—rendering the fracture stronger and more luminous than the unbroken whole.` },
       { label: "II · SHRINE RECORD", tag: "SONGS OF THE MAD GODS", heading: "TRANSMUTATION", body: `"With withered dreams am I still to love? Can my deep scars be beautiful?"` },
       { label: "III · LYRIC INSCRIPTION", tag: "REALM IV CODEX", heading: "LOTUS", body: `I close my eyes, hear the songs of the mad Gods cry\nDetach and sink into insanity\nWith withered dreams am I still to love?\nCan my deep scars be beautiful?\nSunlight fading, shed it all away\nAs the stars are blooming like the lotuses.` },
-      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM IV", heading: "CROWN OF LOTUS", isArt: true, body: `Golden kintsugi veins radiating through dark obsidian glass.` }
+      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM IV", heading: "CROWN OF LOTUS", isArt: true, artImage: "assets/img/lotus.jpg", body: `Golden kintsugi veins radiating through dark obsidian glass.` }
     ]
   },
   {
@@ -183,7 +183,7 @@ Ghosts will inherit the Earth.`
       { label: "I · COVENANT LOG", tag: "CRIMSON CATHEDRAL // LILITH PROTOCOL", heading: "THE PARASITE VOW", body: `An obsession that drinks the host dry while promising eternal warmth inside the scarlet dark.` },
       { label: "II · INTERCEPT 01:02", tag: "WHISPER FREQUENCY", heading: "NO ESCAPE", body: `"Come to me... I know you want to... I am Lilith, there is no escape."` },
       { label: "III · LYRIC INSCRIPTION", tag: "REALM V CODEX", heading: "BLOODLUST", body: `Say you love me as the blood drips from your lips\nCruelest beauty, what have you done to me?\nWould you lie for me, like I would die for you?\nLure me to rest on our bed of lust and death\nCrimson love, death will consume me... enjoy your last breath.` },
-      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM V", heading: "SCARLET CHALICE", isArt: true, body: `Razor-edged crimson prism pulsing with the heartbeat of the breakdown.` }
+      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM V", heading: "SCARLET CHALICE", isArt: true, artImage: "assets/img/bloodlust.jpg", body: `Razor-edged crimson prism pulsing with the heartbeat of the breakdown.` }
     ]
   },
   {
@@ -205,7 +205,7 @@ Ghosts will inherit the Earth.`
       { label: "I · CHRONO LOG", tag: "AMBER STASIS CHAMBER", heading: "SANDS OF TIME", body: `Encased in ash and amber glass, awaiting the 03:05 harmonic fracture that shatters predestined fate.` },
       { label: "II · OMEN RECORD", tag: "THE ALL-SEEING EYE", heading: "DESTINY DEFIED", body: `"All-seeing eye, can destiny be defied? To find a world I can call mine."` },
       { label: "III · LYRIC INSCRIPTION", tag: "REALM VI CODEX", heading: "CHRYSALIS", body: `Can you hear me? Open your arms\nI want to see beyond the stars\nHeaven knows I can't heal, I'll just dream again\nAll-seeing eye, can destiny be defied?\nI must defy the sands of time.` },
-      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM VI", heading: "THE HOURGLASS CORE", isArt: true, body: `Metamorphic amber crystal suspended against the pull of entropy.` }
+      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM VI", heading: "THE HOURGLASS CORE", isArt: true, artImage: "assets/img/chrysalis.jpg", body: `Metamorphic amber crystal suspended against the pull of entropy.` }
     ]
   },
   {
@@ -227,7 +227,8 @@ Ghosts will inherit the Earth.`
       { label: "I · ASTRAL LOG", tag: "EDGE OF REALITY // FINALE", heading: "THE UNDYING STAR", body: `Where gravity dissolves and every memory anchor links into a burning constellation beneath the Azure Moon.` },
       { label: "II · ABYSS ECHO", tag: "NIGHT DIVIDED", heading: "AZURE HORIZON", body: `"With closed eyes I see me falling under the glow of the azure moon. Guide me, undying star."` },
       { label: "III · LYRIC INSCRIPTION", tag: "REALM VII CODEX", heading: "MOON", body: `Night, dividing clouds, you surface\nCalling me into the abyss\nTowering walls encased in stone\nWith closed eyes I see me falling\nUnder the glow of the azure moon\nDancing constellations beyond the edge of reality.` },
-      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM VII", heading: "THE AZURE MOON", isArt: true, body: `Deep-space sapphire prism reflecting the final constellation.` }
+      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM VII", heading: "THE AZURE MOON", isArt: true, artImage: "assets/img/moon.jpg", body: `Deep-space sapphire prism reflecting the final constellation.` }
     ]
   }
 ];
+
