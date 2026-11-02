@@ -3,16 +3,17 @@ import { NODES, SIGIL_OUTLINE } from './nodes-data.js';
 import { AudioNexus } from './audio-nexus.js';
 
 let gravityWaveBoost = 0.0;
-// diveTarget: 0.0 = Outside looking at the DTE Crystal Sigil, 1.0 = Inside the Quantum Refraction Chamber
+// diveTarget: 0.0 = Outside Threshold looking at Sigil, 1.0 = Encompassed Inside the Quantum Refraction Realm
 let diveTarget = 0.0;
 let diveCurrent = 0.0;
-let focusedShardIdx = -1;
+let focusedShardIdx = -1; // -1 = free look inside realm, 0..3 = inspecting a specific crystal shard
 
-// Relaxed, Subtle 4D Micro-Shift State (Triggers rarely on heavy transients, zero ghost clutter)
+// Controlled, Less Intense 4D Glitch State (Quantized planar shear slices + subtle ghost double with cooldown)
 let glitchSliceY = 0.0;
 let glitchSliceDir = 0.0;
 let glitchShearX = 0.0;
 let glitchShearZ = 0.0;
+let glitchScaleW = 1.0;
 let glitchHoldFrames = 0;
 let glitchCooldown = 0;
 
@@ -27,7 +28,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x020204);
 scene.fog = new THREE.FogExp2(0x020204, 0.075);
 
-const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 80);
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 80);
 camera.position.set(0, 0.15, 7.2);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
@@ -109,7 +110,7 @@ const backMistMat = new THREE.ShaderMaterial({
 
       vec2 toSigil = uv - uSigilOffset;
       float distSq = dot(toSigil, toSigil);
-      vec2 warpedUv = uv - toSigil * (0.12 + uGravityPulse * 0.08) * exp(-distSq * 2.2);
+      vec2 warpedUv = uv - toSigil * (0.14 + uGravityPulse * 0.10) * exp(-distSq * 2.2);
 
       float n1 = fbm(warpedUv * 1.65);
       float n2 = fbm(warpedUv * 3.1 - vec2(uTime * 0.03, n1 * 1.1));
@@ -119,7 +120,7 @@ const backMistMat = new THREE.ShaderMaterial({
       float horizon = exp(-pow((vUv.y - 0.24) * 4.5, 2.0)) * 0.55;
 
       vec3 col = uTint * (centerPlume * 0.65 + horizon * 0.50) * (0.4 + n1 * 0.78);
-      col += uRim * wisps * centerPlume * (0.26 + uGravityPulse * 0.25 + uDive * 0.18);
+      col += uRim * wisps * centerPlume * (0.26 + uGravityPulse * 0.28 + uDive * 0.22);
 
       gl_FragColor = vec4(col, 0.95);
     }
@@ -236,7 +237,7 @@ for (let i = 0; i < 5; i++) {
 }
 
 // 4. INTERACTIVE GRAVITATIONAL MIST PARTICLES
-const PARTICLE_COUNT = 1600;
+const PARTICLE_COUNT = 1800;
 const pGeo = new THREE.BufferGeometry();
 const pPositions = new Float32Array(PARTICLE_COUNT * 3);
 const pVelocities = new Float32Array(PARTICLE_COUNT * 3);
@@ -244,16 +245,16 @@ const pSizes = new Float32Array(PARTICLE_COUNT);
 
 for (let i = 0; i < PARTICLE_COUNT; i++) {
   const i3 = i * 3;
-  const isFloor = Math.random() < 0.65;
+  const isFloor = Math.random() < 0.62;
   pPositions[i3]     = (Math.random() - 0.5) * 14;
-  pPositions[i3 + 1] = isFloor ? (-1.72 + Math.random() * 0.95) : ((Math.random() - 0.5) * 3.6);
+  pPositions[i3 + 1] = isFloor ? (-1.72 + Math.random() * 0.95) : ((Math.random() - 0.5) * 3.8);
   pPositions[i3 + 2] = (Math.random() - 0.5) * 16 - 3.0;
 
-  pVelocities[i3]     = (Math.random() - 0.5) * 0.0035;
-  pVelocities[i3 + 1] = isFloor ? (-0.001 - Math.random() * 0.0015) : ((Math.random() - 0.5) * 0.002);
-  pVelocities[i3 + 2] = (Math.random() - 0.5) * 0.0025;
+  pVelocities[i3]     = (Math.random() - 0.5) * 0.004;
+  pVelocities[i3 + 1] = isFloor ? (-0.001 - Math.random() * 0.002) : ((Math.random() - 0.5) * 0.0025);
+  pVelocities[i3 + 2] = (Math.random() - 0.5) * 0.003;
 
-  pSizes[i] = isFloor ? (18 + Math.random() * 26) : (9 + Math.random() * 18);
+  pSizes[i] = isFloor ? (18 + Math.random() * 28) : (9 + Math.random() * 20);
 }
 
 pGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
@@ -294,7 +295,7 @@ const mistParticles = new THREE.Points(pGeo, pMat);
 scene.add(mistParticles);
 
 // ============================================================================
-// 5. PURE SEE-THROUGH CRYSTAL SHADER WITH SUBTLE, RELAXED 4D MICRO-SHIFT
+// 5. CONTROLLED 4D GLITCH-WARP CRYSTAL SHADER (SMOOTHENED & LESS ERRATIC)
 // ============================================================================
 const crystalVertexShader = `
   uniform float uTime;
@@ -317,12 +318,20 @@ const crystalVertexShader = `
 
     vec3 pos = position;
 
-    // Subtle, relaxed 4D planar micro-shift on strong audio transients
+    // Controlled 4D planar shear slice on the Sigil during musical transients
     if (uIsSigil > 0.5 && abs(uGlitchShearX) > 0.001) {
       float planeCoord = pos.y * cos(uGlitchSliceDir) + pos.x * sin(uGlitchSliceDir);
-      float sliceBand = step(uGlitchSliceY - 0.18, planeCoord) * step(planeCoord, uGlitchSliceY + 0.18);
+      float sliceBand = step(uGlitchSliceY - 0.22, planeCoord) * step(planeCoord, uGlitchSliceY + 0.22);
+
       pos.x += sliceBand * uGlitchShearX;
       pos.z += sliceBand * uGlitchShearZ;
+
+      float quantY = floor(pos.y * 5.0) / 5.0;
+      float hashStep = fract(sin(quantY * 91.7 + floor(uTime * 12.0) * 17.3) * 43758.5453);
+      if (hashStep > 0.88) {
+        pos.x += (hashStep - 0.9) * uGlitchShearX * 1.25;
+        pos.z -= uGlitchShearZ * 0.5;
+      }
     }
 
     vec4 wp = modelMatrix * vec4(pos, 1.0);
@@ -364,7 +373,7 @@ function createBackFaceMat(isSigilVal) {
         float isBevel = 1.0 - smoothstep(0.82, 0.97, abs(vObjNormal.z));
         vec3 lightDir = normalize(uLightPos - vWorldPos);
         float internalGlint = pow(max(dot(-vViewNormal, lightDir), 0.0), 3.0) * isBevel;
-        float internalEdge = (isBevel * 0.22 + internalGlint * 0.45) * uOpacity;
+        float internalEdge = (isBevel * 0.24 + internalGlint * 0.48) * uOpacity;
         gl_FragColor = vec4(uRimColor, internalEdge);
       }
     `
@@ -414,20 +423,26 @@ function createFrontFaceMat(isSigilVal) {
         // Object-space bevel lock: 0.0 on flat faces at ALL angles, 1.0 on 3D bevels
         float isBevel = 1.0 - smoothstep(0.84, 0.97, abs(vObjNormal.z));
 
-        vec2 refractOffset = vViewNormal.xy * (0.016 + isBevel * 0.055) + vLocalPos.xy * 0.012;
-        float dispersion = 1.0 + uBass * 0.55 + abs(uGlitchShearX) * 3.5;
+        // Optical glass refraction + controlled chromatic dispersion spike during 4D phase shifts
+        vec2 refractOffset = vViewNormal.xy * (0.018 + isBevel * 0.058) + vLocalPos.xy * 0.012;
+        float dispersion = 1.0 + uBass * 0.60 + abs(uGlitchShearX) * 5.0;
 
-        vec2 uvR = clamp(screenUv - refractOffset * dispersion * 0.88, 0.001, 0.999);
+        vec2 uvR = clamp(screenUv - refractOffset * dispersion * 0.86, 0.001, 0.999);
         vec2 uvG = clamp(screenUv - refractOffset * dispersion * 1.02, 0.001, 0.999);
-        vec2 uvB = clamp(screenUv - refractOffset * dispersion * 1.16, 0.001, 0.999);
+        vec2 uvB = clamp(screenUv - refractOffset * dispersion * 1.18, 0.001, 0.999);
 
         vec3 refractedScene;
         refractedScene.r = texture2D(uEnvTex, uvR).r;
         refractedScene.g = texture2D(uEnvTex, uvG).g;
         refractedScene.b = texture2D(uEnvTex, uvB).b;
 
+        // Internal quantum reflection lattice (visible inside the glass facets)
+        vec3 reflectVec = reflect(-vViewDir, vViewNormal);
+        float lattice = smoothstep(0.78, 0.99, sin(reflectVec.x * 14.0 + vWorldPos.y * 4.0) * cos(reflectVec.y * 14.0 - vWorldPos.x * 4.0));
+        vec3 internalScrying = uRimColor * lattice * (0.06 + uBass * 0.14 + uHoverGlow * 0.25);
+
         float viewGrazing = pow(1.0 - abs(dot(vViewNormal, vViewDir)), 2.4);
-        float bevelFresnel = isBevel * (0.35 + viewGrazing * 0.85 + uHoverGlow * 0.5);
+        float bevelFresnel = isBevel * (0.35 + viewGrazing * 0.88 + uHoverGlow * 0.55);
 
         vec3 lightDir = normalize(uLightPos - vWorldPos);
         vec3 halfVec = normalize(lightDir + vViewDir);
@@ -436,8 +451,9 @@ function createFrontFaceMat(isSigilVal) {
         float bevelDiffuseGlint = pow(max(dot(vViewNormal, lightDir), 0.0), 2.2) * isBevel;
         float floorBounce = max(0.0, -vViewNormal.y) * isBevel * 0.35;
 
-        vec3 glassHighlights = uRimColor * (bevelFresnel * 0.55 + bevelDiffuseGlint * 0.85 + floorBounce)
-                             + vec3(0.95, 0.98, 1.0) * (bevelSpec * (0.95 + uBass * 0.65 + uHoverGlow * 0.5));
+        vec3 glassHighlights = uRimColor * (bevelFresnel * 0.58 + bevelDiffuseGlint * 0.88 + floorBounce)
+                             + vec3(0.95, 0.98, 1.0) * (bevelSpec * (0.95 + uBass * 0.7 + uHoverGlow * 0.6))
+                             + internalScrying;
 
         vec3 finalCol = refractedScene + glassHighlights * uOpacity;
         gl_FragColor = vec4(finalCol, uOpacity);
@@ -447,7 +463,7 @@ function createFrontFaceMat(isSigilVal) {
 }
 
 // ============================================================================
-// 6. BUILD THE UNBROKEN 58-POINT DTE CRYSTAL SIGIL
+// 6. BUILD THE UNBROKEN 58-POINT DTE CRYSTAL SIGIL + 4D GHOST-ECHO DOUBLE
 // ============================================================================
 const sigilShape = new THREE.Shape();
 SIGIL_OUTLINE.forEach(([px, py], idx) => {
@@ -472,6 +488,7 @@ sigilGeo.computeVertexNormals();
 
 const sigilBackMat = createBackFaceMat(1.0);
 const sigilFrontMat = createFrontFaceMat(1.0);
+const sigilGhostMat = createBackFaceMat(1.0);
 
 const sigilGroup = new THREE.Group();
 sigilGroup.position.set(0, 0.18, 0);
@@ -479,34 +496,53 @@ scene.add(sigilGroup);
 
 const sigilBackMesh = new THREE.Mesh(sigilGeo, sigilBackMat);
 const sigilFrontMesh = new THREE.Mesh(sigilGeo, sigilFrontMat);
+const sigilGhostMesh = new THREE.Mesh(sigilGeo, sigilGhostMat);
+sigilGhostMesh.visible = false;
 sigilGroup.add(sigilBackMesh);
 sigilGroup.add(sigilFrontMesh);
+sigilGroup.add(sigilGhostMesh);
 
 // ============================================================================
-// 7. BUILD THE CLEAN, ENCOMPASSING QUANTUM REFRACTION CHAMBER (ZERO WIREFRAME CLUTTER)
+// 7. BUILD THE ENCOMPASSING 360° QUANTUM REFRACTION REALM (INSIDE THE CRYSTAL)
+//  A) Encompassing multi-faceted Crystalline Tesseract Cathedral Dome (outer & inner shells + 8 giant sigil mirror walls)
+//  B) 4 Interactive Refractive Memory Monoliths (Patient Log, Last Public Transmission, Lyrics, Cover Art)
 // ============================================================================
 const quantumRealmGroup = new THREE.Group();
 quantumRealmGroup.position.set(0, 0.1, -3.5);
 scene.add(quantumRealmGroup);
 
-// Surrounding ring of 8 tall, sleek diamond-cut crystal monolith walls (gives the encompassing refracted space feel)
-const wallPillarShape = new THREE.Shape();
-const pw = 0.34, ph = 2.1;
-wallPillarShape.moveTo(0, ph);
-wallPillarShape.lineTo(pw, ph * 0.72);
-wallPillarShape.lineTo(pw, -ph * 0.72);
-wallPillarShape.lineTo(0, -ph);
-wallPillarShape.lineTo(-pw, -ph * 0.72);
-wallPillarShape.lineTo(-pw, ph * 0.72);
-wallPillarShape.closePath();
+// Outer Crystalline Polyhedron Cage (Surrounds the camera 360 degrees)
+const cageGeo = new THREE.IcosahedronGeometry(5.6, 1);
+const cageEdgesGeo = new THREE.EdgesGeometry(cageGeo);
+const cageLinesMat = new THREE.LineBasicMaterial({
+  color: 0x78d8b0,
+  transparent: true,
+  opacity: 0.0,
+  blending: THREE.AdditiveBlending
+});
+const cageWireframe = new THREE.LineSegments(cageEdgesGeo, cageLinesMat);
+quantumRealmGroup.add(cageWireframe);
 
-const wallFacetGeo = new THREE.ExtrudeGeometry(wallPillarShape, {
-  depth: 0.14,
+// Inner counter-rotating 4D Tesseract Octahedron Shell
+const innerShellGeo = new THREE.OctahedronGeometry(4.4, 1);
+const innerShellEdges = new THREE.EdgesGeometry(innerShellGeo);
+const innerShellLinesMat = new THREE.LineBasicMaterial({
+  color: 0xffffff,
+  transparent: true,
+  opacity: 0.0,
+  blending: THREE.AdditiveBlending
+});
+const innerShellWireframe = new THREE.LineSegments(innerShellEdges, innerShellLinesMat);
+quantumRealmGroup.add(innerShellWireframe);
+
+// Encompassing Refractive Facet Mirrors (8 large angled sigil-crystal walls forming the surrounding prism hall)
+const wallFacetGeo = new THREE.ExtrudeGeometry(sigilShape, {
+  depth: 0.08,
   bevelEnabled: true,
-  bevelSegments: 5,
+  bevelSegments: 3,
   steps: 1,
-  bevelSize: 0.032,
-  bevelThickness: 0.08,
+  bevelSize: 0.025,
+  bevelThickness: 0.05,
   curveSegments: 8
 });
 wallFacetGeo.center();
@@ -517,11 +553,12 @@ const wallFrontMat = createFrontFaceMat(0.0);
 const wallMirrors = [];
 
 for (let i = 0; i < 8; i++) {
-  const ang = (i / 8) * Math.PI * 2 + 0.39;
+  const ang = (i / 8) * Math.PI * 2;
   const holder = new THREE.Group();
-  const radius = 4.5;
-  holder.position.set(Math.cos(ang) * radius, 0.2, Math.sin(ang) * radius);
-  holder.lookAt(0, 0.2, 0);
+  const radius = 4.2;
+  holder.position.set(Math.cos(ang) * radius, 0.25 + (i % 2 === 0 ? 0.4 : -0.3), Math.sin(ang) * radius);
+  holder.lookAt(0, 0.1, 0);
+  holder.scale.set(1.55, 1.55, 1.0);
 
   const bM = new THREE.Mesh(wallFacetGeo, wallBackMat);
   const fM = new THREE.Mesh(wallFacetGeo, wallFrontMat);
@@ -531,9 +568,9 @@ for (let i = 0; i < 8; i++) {
   wallMirrors.push({ holder, bM, fM, baseAng: ang });
 }
 
-// The 4 Interactive Refractive Memory Shards in an arc in front of the viewer
+// The 4 Interactive Refractive Memory Monoliths
 const shardShape = new THREE.Shape();
-const sw = 0.44, sh = 0.88;
+const sw = 0.48, sh = 0.92;
 shardShape.moveTo(0, sh);
 shardShape.lineTo(sw, sh * 0.68);
 shardShape.lineTo(sw * 0.85, -sh * 0.72);
@@ -556,7 +593,7 @@ shardGeo.computeVertexNormals();
 
 const memoryShards = [];
 const shardInteractMeshes = [];
-const shardAngles = [-0.82, -0.27, 0.27, 0.82];
+const shardAngles = [-0.85, -0.28, 0.28, 0.85];
 
 for (let i = 0; i < 4; i++) {
   const holder = new THREE.Group();
@@ -592,7 +629,7 @@ for (let i = 0; i < 4; i++) {
 }
 
 // ============================================================================
-// 8. CLEAN ETCHED-INSIDE-GLASS PROJECTION RENDERER
+// 8. ETCHED-INSIDE-GLASS PROJECTION & PROCEDURAL COVER ART RELIC RENDERER
 // ============================================================================
 const projOverlayEl = document.getElementById('crystalProjection');
 const projTagEl = document.getElementById('projTag');
@@ -603,7 +640,7 @@ const projArtCanvas = document.getElementById('projArtCanvas');
 const projArtCtx = projArtCanvas.getContext('2d');
 const loadedArtImages = new Map();
 
-function drawRelicArtCanvas(node, shard, t, bass) {
+function drawRelicArtCanvas(node, shard, t) {
   const W = projArtCanvas.width;
   const H = projArtCanvas.height;
   projArtCtx.clearRect(0, 0, W, H);
@@ -638,19 +675,27 @@ function drawRelicArtCanvas(node, shard, t, bass) {
   projArtCtx.save();
   projArtCtx.translate(W / 2, H / 2);
 
-  projArtCtx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${0.32 + bass * 0.35})`;
-  projArtCtx.lineWidth = 1.4;
-  for (let rad of [185, 145]) {
+  projArtCtx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.35)`;
+  projArtCtx.lineWidth = 1.5;
+  for (let rad of [190, 155, 115]) {
     projArtCtx.beginPath();
-    projArtCtx.arc(0, 0, rad + bass * 6, 0, Math.PI * 2);
+    projArtCtx.arc(0, 0, rad, 0, Math.PI * 2);
+    projArtCtx.stroke();
+  }
+
+  for (let i = 0; i < 12; i++) {
+    const ang = (i / 12) * Math.PI * 2 + t * 0.15;
+    projArtCtx.beginPath();
+    projArtCtx.moveTo(Math.cos(ang) * 115, Math.sin(ang) * 115);
+    projArtCtx.lineTo(Math.cos(ang) * 190, Math.sin(ang) * 190);
     projArtCtx.stroke();
   }
 
   projArtCtx.strokeStyle = `rgba(255, 255, 255, 0.88)`;
-  projArtCtx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.12)`;
-  projArtCtx.lineWidth = 2.0;
+  projArtCtx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.14)`;
+  projArtCtx.lineWidth = 2.2;
   projArtCtx.shadowColor = `rgb(${r}, ${g}, ${b})`;
-  projArtCtx.shadowBlur = 16;
+  projArtCtx.shadowBlur = 18;
   projArtCtx.beginPath();
   SIGIL_OUTLINE.forEach(([px, py], idx) => {
     const sx = (px - 500) * 0.36;
@@ -683,7 +728,7 @@ function openShardProjection(shardIdx) {
 
   if (shardData.isArt) {
     projArtFrameEl.classList.add('visible');
-    drawRelicArtCanvas(node, shardData, performance.now() * 0.001, 0);
+    drawRelicArtCanvas(node, shardData, performance.now() * 0.001);
   } else {
     projArtFrameEl.classList.remove('visible');
   }
@@ -706,10 +751,7 @@ projOverlayEl.addEventListener('click', (e) => {
 });
 
 // ============================================================================
-// 9. CLEAN, RELIABLE INTERACTION CONTROLS
-// - Single-click at entrance: starts/toggles music
-// - Double-click or Scroll: glides inside the Quantum Refraction Chamber
-// - Single-click on a Shard inside chamber: opens its etched lore projection
+// 9. INTERACTION: CLICK SIGIL TO ENTER QUANTUM REALM, CLICK SHARDS TO INSPECT
 // ============================================================================
 let currentRotX = 0.0, currentRotY = 0.0;
 let targetRotX = 0.0, targetRotY = 0.0;
@@ -730,11 +772,11 @@ window.addEventListener('dblclick', () => {
   }
   const nextDive = diveTarget < 0.5 ? 1.0 : 0.0;
   setDiveProgress(nextDive);
-  gravityWaveBoost = 1.0;
+  gravityWaveBoost = 1.2;
 
   const node = audioNexus.activeNode;
   if (nextDive > 0.5) {
-    audioNexus.showTitleWhisper(`INSIDE ${node.roman} · ${node.title}  [CLICK SHARDS TO INSPECT · DBL-CLICK TO EXIT]`, 5000);
+    audioNexus.showTitleWhisper(`QUANTUM REFRACTION REALM  ·  ${node.roman} ${node.title}  [CLICK SHARDS TO INSPECT]`, 5200);
     if (!audioNexus.hasStartedFirstTrack || audioNexus.audioElement.paused) {
       audioNexus.selectNode(audioNexus.activeIdx, true);
     }
@@ -746,7 +788,7 @@ window.addEventListener('dblclick', () => {
 window.addEventListener('wheel', (e) => {
   if (focusedShardIdx !== -1) return;
   setDiveProgress(diveTarget + e.deltaY * 0.0009);
-  gravityWaveBoost = Math.min(1.0, gravityWaveBoost + 0.2);
+  gravityWaveBoost = Math.min(1.0, gravityWaveBoost + 0.22);
 }, { passive: true });
 
 window.addEventListener('keydown', (e) => {
@@ -797,9 +839,9 @@ window.addEventListener('pointermove', (e) => {
     const dy = (e.clientY - lastY) / window.innerHeight;
     lastX = e.clientX;
     lastY = e.clientY;
-    dragOffsetY = Math.max(-0.85, Math.min(0.85, dragOffsetY + dx * 1.5));
-    dragOffsetX = Math.max(-0.40, Math.min(0.40, dragOffsetX + dy * 1.2));
-    gravityWaveBoost = Math.min(1.0, gravityWaveBoost + Math.hypot(dx, dy) * 2.5);
+    dragOffsetY = Math.max(-0.95, Math.min(0.95, dragOffsetY + dx * 1.6));
+    dragOffsetX = Math.max(-0.45, Math.min(0.45, dragOffsetX + dy * 1.2));
+    gravityWaveBoost = Math.min(1.0, gravityWaveBoost + Math.hypot(dx, dy) * 3.0);
   }
 });
 
@@ -808,17 +850,33 @@ window.addEventListener('pointerup', (e) => {
   const moveDist = Math.hypot(e.clientX - downX, e.clientY - downY);
 
   if (moveDist < 8) {
-    // If inside the Quantum Chamber, clicking a Shard opens its Etched Projection
+    raycaster.setFromCamera(mouseNDC, camera);
+
+    // 1. If inside the Quantum Realm and clicking one of the 4 Memory Shards, open its Etched Glass Projection
     if (diveCurrent > 0.65 && focusedShardIdx === -1) {
-      raycaster.setFromCamera(mouseNDC, camera);
       const shardHits = raycaster.intersectObjects(shardInteractMeshes, false);
       if (shardHits.length > 0) {
-        openShardProjection(shardHits[0].object.userData.memoryShardIndex);
+        const idx = shardHits[0].object.userData.memoryShardIndex;
+        openShardProjection(idx);
         return;
       }
     }
 
-    // If music hasn't started yet, first click awakens the active track
+    // 2. If outside at the Threshold and clicking the DTE Sigil, transition INSIDE the Quantum Refraction Realm
+    if (diveCurrent < 0.4) {
+      const sigilHits = raycaster.intersectObject(sigilFrontMesh, false);
+      if (sigilHits.length > 0) {
+        if (!audioNexus.hasStartedFirstTrack) {
+          audioNexus.selectNode(audioNexus.activeIdx, true);
+        }
+        setDiveProgress(1.0);
+        gravityWaveBoost = 1.2;
+        const node = audioNexus.activeNode;
+        audioNexus.showTitleWhisper(`INSIDE ${node.roman} · ${node.title}  [CLICK CRYSTAL SHARDS TO INSPECT]`, 5200);
+        return;
+      }
+    }
+
     if (!audioNexus.hasStartedFirstTrack) {
       audioNexus.selectNode(audioNexus.activeIdx, true);
     }
@@ -839,7 +897,7 @@ window.addEventListener('resize', () => {
 });
 
 // ============================================================================
-// 10. MAIN RENDER LOOP
+// 10. MAIN LOOP: TUNED 4D GLITCH-WARP + 360° QUANTUM REFRACTION CHAMBER
 // ============================================================================
 const clock = new THREE.Clock();
 let prevBass = 0;
@@ -849,44 +907,43 @@ function animate() {
   const t = clock.getElapsedTime();
   const activeNode = audioNexus.activeNode;
 
-  const { bass } = audioNexus.getSpectrum(t);
+  const bass = audioNexus.getBassEnergy(t);
   const bassDelta = Math.max(0, bass - prevBass);
   prevBass = bass;
 
   gravityWaveBoost *= 0.95;
-  const totalPulse = Math.min(1.2, bass * 1.1 + gravityWaveBoost * 0.55);
+  const totalPulse = Math.min(1.2, bass * 1.15 + gravityWaveBoost * 0.6);
 
-  // Subtle chromatic breathing on open projection headings
-  if (focusedShardIdx !== -1) {
-    document.documentElement.style.setProperty('--chroma-shift', (bass * 3.0).toFixed(2) + 'px');
-  }
-
-  // RELAXED, RARE 4D MICRO-SHIFT (Only on strong transients, with cooldown, no ghost mesh)
+  // TUNED, LESS ERRATIC 4D GLITCH-WARP (Has a cooldown & ~45% gentler shear + ghost offset)
   if (glitchCooldown > 0) glitchCooldown--;
+
   if (glitchHoldFrames > 0) {
     glitchHoldFrames--;
     if (glitchHoldFrames === 0) {
       glitchShearX = 0.0;
       glitchShearZ = 0.0;
+      glitchScaleW = 1.0;
+      sigilGhostMesh.visible = false;
     }
-  } else if (!audioNexus.audioElement.paused && glitchCooldown === 0 && bassDelta > 0.095 && bass > 0.38) {
-    glitchHoldFrames = 2; // Brief 2-frame micro-shift
-    glitchCooldown = 75 + Math.floor(Math.random() * 60); // Wait 1.2 - 2.2 seconds before next possible shift
-    glitchSliceY = (Math.random() - 0.5) * 1.8;
-    glitchSliceDir = (Math.floor(Math.random() * 2) * Math.PI) / 4.0;
-    const microShift = 0.028 + bass * 0.045;
-    glitchShearX = (Math.random() > 0.5 ? 1 : -1) * microShift;
-    glitchShearZ = (Math.random() > 0.5 ? 1 : -1) * microShift;
+  } else if (!audioNexus.audioElement.paused && glitchCooldown === 0 && (bassDelta > 0.075 || (bass > 0.42 && Math.random() < 0.07))) {
+    glitchHoldFrames = 2 + Math.floor(Math.random() * 3); // Hold clean dislocation for 2-4 frames
+    glitchCooldown = 28 + Math.floor(Math.random() * 35); // Cooldown prevents erratic rapid-fire flickering
+    glitchSliceY = (Math.random() - 0.5) * 2.0;
+    glitchSliceDir = (Math.floor(Math.random() * 4) * Math.PI) / 4.0;
+    const intensity = 0.026 + bass * 0.068; // Smoother, more controlled shear amplitude
+    glitchShearX = (Math.random() > 0.5 ? 1 : -1) * intensity;
+    glitchShearZ = (Math.random() > 0.5 ? 1 : -1) * intensity * 1.15;
+    glitchScaleW = 1.0 + (Math.random() - 0.5) * 0.032;
+
+    // Subtle 4D Ghost-Echo Double phase shift
+    sigilGhostMesh.visible = true;
+    sigilGhostMesh.position.set(glitchShearX * 1.15, (Math.random() - 0.5) * 0.035, -glitchShearZ * 1.35);
+    sigilGhostMesh.rotation.z = (Math.random() - 0.5) * 0.045;
   }
 
   diveCurrent += (diveTarget - diveCurrent) * 0.042;
   smoothMouseNDC.lerp(mouseNDC, 0.08);
   smoothMouse3D.lerp(mouseWorldTarget, 0.08);
-
-  if (!isDragging) {
-    dragOffsetX *= 0.96;
-    dragOffsetY *= 0.96;
-  }
 
   // CAMERA NAVIGATION
   let camGoalX = smoothMouseNDC.x * 0.45 * diveCurrent;
@@ -894,7 +951,7 @@ function animate() {
   let camGoalZ = THREE.MathUtils.lerp(7.2, -3.5, diveCurrent);
 
   let lookGoalX = (smoothMouseNDC.x + dragOffsetY * 1.8) * (0.25 + diveCurrent * 2.2);
-  let lookGoalY = -0.15 + (smoothMouseNDC.y - dragOffsetX * 1.4) * (0.18 + diveCurrent * 1.0);
+  let lookGoalY = -0.15 + (smoothMouseNDC.y - dragOffsetX * 1.4) * (0.18 + diveCurrent * 1.1);
   let lookGoalZ = camGoalZ - 5.0;
 
   if (focusedShardIdx !== -1 && diveCurrent > 0.6) {
@@ -909,7 +966,7 @@ function animate() {
     lookGoalZ = worldShardPos.z;
 
     if (activeNode.shards[focusedShardIdx] && activeNode.shards[focusedShardIdx].isArt) {
-      drawRelicArtCanvas(activeNode, activeNode.shards[focusedShardIdx], t, bass);
+      drawRelicArtCanvas(activeNode, activeNode.shards[focusedShardIdx], t);
     }
   }
 
@@ -918,43 +975,62 @@ function animate() {
   camera.position.z += (camGoalZ - camera.position.z) * 0.055;
   camera.lookAt(lookGoalX, lookGoalY, lookGoalZ);
 
+  if (!isDragging) {
+    dragOffsetX *= 0.96;
+    dragOffsetY *= 0.96;
+  }
+
   targetRotY = activeNode.targetRotY + smoothMouseNDC.x * 0.22 + dragOffsetY + Math.sin(t * 0.35) * 0.04;
   targetRotX = activeNode.targetRotX - smoothMouseNDC.y * 0.14 + dragOffsetX + Math.cos(t * 0.28) * 0.03;
 
   currentRotY += (targetRotY - currentRotY) * 0.03;
   currentRotX += (targetRotX - currentRotX) * 0.03;
 
-  const sigilPortalScale = 1.0 + diveCurrent * 2.2;
-  sigilGroup.scale.set(sigilPortalScale, sigilPortalScale, 1.0 + diveCurrent * 1.4);
+  // As you dive inside, the entrance Sigil expands around you like a 4D portal threshold
+  const sigilPortalScale = (1.0 + diveCurrent * 2.4) * glitchScaleW;
+  sigilGroup.scale.set(sigilPortalScale, sigilPortalScale, 1.0 + diveCurrent * 1.5);
   sigilGroup.rotation.y = currentRotY;
   sigilGroup.rotation.x = currentRotX;
-  sigilGroup.position.set(0, 0.18 + Math.sin(t * 0.55) * 0.045 - totalPulse * 0.03, 0);
+  sigilGroup.position.y = 0.18 + Math.sin(t * 0.55) * 0.045 - totalPulse * 0.03;
 
   const sigilFade = THREE.MathUtils.smoothstep(camera.position.z, -0.5, 2.5);
   sigilGroup.visible = sigilFade > 0.01;
   sigilBackMat.uniforms.uOpacity.value = sigilFade;
   sigilFrontMat.uniforms.uOpacity.value = sigilFade;
+  sigilGhostMat.uniforms.uOpacity.value = sigilFade * 0.45;
 
-  // Encompassing Quantum Refraction Chamber (Clean prism walls + 4 Memory Shards)
+  // Encompassing 360° Quantum Refraction Chamber visibility & rotation
   const realmFade = THREE.MathUtils.smoothstep(diveCurrent, 0.10, 0.65);
   quantumRealmGroup.visible = realmFade > 0.01;
+  cageLinesMat.color.lerp(activeNode.rim, 0.05);
+  cageLinesMat.opacity = realmFade * (0.14 + totalPulse * 0.22);
+  innerShellLinesMat.color.lerp(activeNode.rim, 0.05);
+  innerShellLinesMat.opacity = realmFade * (0.09 + totalPulse * 0.16);
+
+  cageWireframe.rotation.y = t * 0.04;
+  cageWireframe.rotation.x = Math.sin(t * 0.03) * 0.15;
+  innerShellWireframe.rotation.y = -t * 0.06;
+  innerShellWireframe.rotation.z = t * 0.03;
+
   wallBackMat.uniforms.uOpacity.value = realmFade * 0.55;
   wallFrontMat.uniforms.uOpacity.value = realmFade * 0.55;
 
+  // Slowly orbit the 8 surrounding sigil-shaped refractive mirror walls around the chamber
   wallMirrors.forEach((wm, i) => {
-    const ang = wm.baseAng + t * 0.02;
-    const rad = 4.5 + Math.sin(t * 0.45 + i) * 0.12;
+    const ang = wm.baseAng + t * 0.025;
+    const rad = 4.2 + Math.sin(t * 0.5 + i) * 0.15;
     wm.holder.position.x = Math.cos(ang) * rad;
     wm.holder.position.z = Math.sin(ang) * rad;
-    wm.holder.lookAt(0, 0.2, 0);
+    wm.holder.lookAt(0, 0.1, 0);
   });
 
+  // Update the 4 Interactive Refractive Memory Monoliths & their 3D floating labels
   memoryShards.forEach((ms, i) => {
     const isHov = (hoveredMemoryShard === ms) || (focusedShardIdx === i);
     ms.hoverVal += ((isHov ? 1.0 : 0.0) - ms.hoverVal) * 0.12;
 
-    ms.holder.position.y = ms.basePos.y + Math.sin(t * 0.75 + i * 1.4) * 0.045 + ms.hoverVal * 0.06;
-    ms.holder.rotation.y = ms.baseRot.y + Math.sin(t * 0.35 + i) * 0.05;
+    ms.holder.position.y = ms.basePos.y + Math.sin(t * 0.8 + i * 1.4) * 0.05 + ms.hoverVal * 0.06;
+    ms.holder.rotation.y = ms.baseRot.y + Math.sin(t * 0.4 + i) * 0.06;
 
     ms.bMat.uniforms.uOpacity.value = realmFade;
     ms.fMat.uniforms.uOpacity.value = realmFade;
@@ -962,7 +1038,7 @@ function animate() {
 
     if (realmFade > 0.55 && focusedShardIdx === -1 && activeNode.shards && activeNode.shards[i]) {
       const worldPos = ms.holder.position.clone().add(quantumRealmGroup.position);
-      worldPos.y -= 1.05;
+      worldPos.y -= 1.08;
       worldPos.project(camera);
 
       if (worldPos.z < 1.0) {
@@ -1042,7 +1118,7 @@ function animate() {
   const lightZ = camera.position.z - 2.2;
 
   const allMats = [
-    sigilBackMat, sigilFrontMat,
+    sigilBackMat, sigilFrontMat, sigilGhostMat,
     wallBackMat, wallFrontMat,
     ...memoryShards.flatMap(s => [s.bMat, s.fMat])
   ];
@@ -1058,7 +1134,7 @@ function animate() {
     mat.uniforms.uLightPos.value.set(lightX, lightY, lightZ);
   });
 
-  // PASS 1: Render background room, floor mist, and internal back-bevels into envTarget
+  // PASS 1: Render background room, floor mist, quantum cage, and internal back-bevels into envTarget
   sigilFrontMesh.visible = false;
   sigilBackMesh.visible = sigilGroup.visible;
   wallMirrors.forEach(wm => { wm.fM.visible = false; wm.bM.visible = quantumRealmGroup.visible; });

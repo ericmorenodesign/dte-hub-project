@@ -25,7 +25,7 @@ export class AudioNexus {
 
     this.initListeners();
     setTimeout(() => {
-      this.showTitleWhisper("CLICK TO AWAKEN SOUND  ·  SCROLL OR DOUBLE-CLICK TO ENTER CRYSTAL", 5200);
+      this.showTitleWhisper("TOUCH CRYSTAL OR NUMERALS I – VII TO AWAKEN SOUND", 5000);
     }, 500);
   }
 
@@ -128,24 +128,17 @@ export class AudioNexus {
     this.updateRomanNavUI();
   }
 
-  getSpectrum(elapsedTime) {
-    let bass = 0, mid = 0, high = 0;
+  getBassEnergy(elapsedTime) {
+    let bass = 0;
     if (this.analyser && this.dataArray && !this.audioElement.paused) {
       this.analyser.getByteFrequencyData(this.dataArray);
       for (let i = 0; i < 10; i++) bass += this.dataArray[i];
       bass /= (10 * 255);
-      for (let i = 10; i < 45; i++) mid += this.dataArray[i];
-      mid /= (35 * 255);
-      for (let i = 45; i < 100; i++) high += this.dataArray[i];
-      high /= (55 * 255);
-
       if (bass < 0.01 && window.location.protocol === 'file:') {
         bass = 0.22 + Math.sin(elapsedTime * 6.5) * 0.12 + Math.pow(Math.sin(elapsedTime * 2.1), 4.0) * 0.25;
-        mid = 0.18 + Math.sin(elapsedTime * 8.2) * 0.10;
-        high = 0.14 + Math.cos(elapsedTime * 11.4) * 0.10;
       }
     }
-    return { bass, mid, high };
+    return bass;
   }
 
   initListeners() {
@@ -210,4 +203,3 @@ export class AudioNexus {
     });
   }
 }
-
