@@ -22,23 +22,23 @@ export const NODES = [
     targetRotY: -0.26,
     targetRotX: -0.06,
     cues: [
-      { t: 0, lyric: "Did you prepare the patient? Yes, we may begin the procedure." },
-      { t: 22, lyric: "I try to wake but dreams persist... my sanity and mind at risk" },
-      { t: 95, lyric: "In the depths of this maze, a glimmer of hope begins to blaze" },
-      { t: 155, lyric: "A bleeding machine... ghosts will inherit the Earth" }
+      { t: 0,   lyric: "[ SURGICAL COUPLING ENGAGED  ·  SUB-LEVEL 09 ]" },
+      { t: 22,  lyric: "[ CORTICAL TELEMETRY: REM-LOCK RESISTANCE DETECTED ]" },
+      { t: 95,  lyric: "[ ANOMALY IN THE LATTICE  ·  UNASSIMILATED SPARK ]" },
+      { t: 155, lyric: "[ CARRIER SIGNAL FAILING  ·  GHOSTS IN THE CONDUIT ]" }
     ],
     shards: [
       {
         label: "I · PATIENT LOG",
         tag: "CLINICAL RECORD // SUB-LEVEL 09 // WARD OF THE BLEEDING MACHINE",
         heading: "PATIENT LOG #00-94",
-        body: `"Did you prepare the patient?"
-"Yes. We may begin the procedure."
+        body: `00:04:12 — Cranial coupling engaged. Subject's biological optic nerve has been severed from baseline sensory input and routed directly into the Hyperreal Lattice.
 
-00:04:12 — Cranial coupling engaged. Subject's biological optic nerve severed from baseline sensory input and routed into the Hyperreal Lattice.
-00:19:48 — Subject exhibits acute REM-lock resistance. Cortical telemetry indicates the patient is aware they are dreaming and is attempting to force awakening.
-01:02:15 — Administering synthetic tactile override ("simulate your touch and feel"). Subject's heart rate spikes to 168 BPM, yet motor cortex remains paralyzed on the operating slab.
-02:34:00 — Anomaly detected in deep limbic sector: a residual spark of unassimilated consciousness refuses erasure. The organic vessel is failing, but the ghost is migrating into the machine.`
+00:19:48 — Subject exhibits acute REM-lock resistance. Cortical telemetry indicates the patient has become lucid inside the sedative loop and is attempting to force physical awakening on the slab.
+
+01:02:15 — Administering synthetic tactile override. Heart rate spikes to 168 BPM while motor cortex remains locked in surgical paralysis. Instead of flatlining under the voltage, the subject's consciousness has refracted—splitting like light hitting a prism into six deeper astral sectors where our erasers cannot track it.
+
+02:34:00 — The organic vessel is failing, but the ghost is migrating deeper into the conduit.`
       },
       {
         label: "II · LAST TRANSMISSION",
@@ -52,36 +52,21 @@ The sky above the coast has locked into a fixed, artificial luminescence. Automa
 
 Do not answer the voices calling from inside your walls—they are synthesized echoes of the already-taken. They do not destroy the body; they hollow it out and replace waking memory with a hyperreal loop.
 
-Streets are silent. Millions lie motionless behind locked doors, breathing in unison with the conduit. Our flesh is becoming their circuitry. If anyone beyond the mist can hear this... remember what was real. Ghosts will inherit the Earth."
+Streets are silent. Millions lie motionless behind locked doors, breathing in unison with the conduit. If anyone beyond the mist can hear this... remember what was real."
 
 [CARRIER LOST — END OF BROADCAST]`
       },
       {
-        label: "III · LYRIC INSCRIPTION",
+        label: "III · CODEX INSCRIPTION",
         tag: "REALM I CODEX // ETCHED IN THE HYPERREAL PRISM",
-        heading: "SIMULACRA",
-        body: `"Did you prepare the patient?
-Yes, we may begin the procedure."
+        heading: "THE BLEEDING MACHINE",
+        body: `First Meditation of the Fractured Vessel:
 
-I try to wake, but dreams persist
-My sanity and mind at risk
-Assimilate in hyperreal
-Simulate your touch and feel
+When the surgeon's needle severs the waking eye, the mind is presented with a counterfeit heaven—a cage of simulated warmth wired into cold bone.
 
-Trapped inside this synthetic cage
-Turning another phantom page
-Is this my blood or wires cold?
-A counterfeit of my own soul
+Most accept the sedative and dissolve into the grid. Yet deep within the labyrinth of synthetic nerves, a single unassimilated ember refuses erasure. It cuts through the phantom pages of the simulation, searching for the seam between the waking and the dream.
 
-In the depths of this maze
-A glimmer of hope begins to blaze
-Through fractured glass I see the seam
-Between the waking and the dream
-
-A bleeding machine
-Cold heart beating
-No one left to hear us screaming
-Ghosts will inherit the Earth.`
+The flesh may be claimed by the conduit, and the cities above may fall silent—but what escapes through the prism cannot be owned by the machine.`
       },
       {
         label: "IV · VISUAL RELIC",
@@ -103,18 +88,59 @@ Ghosts will inherit the Earth.`
     targetRotY: -0.16,
     targetRotX: 0.05,
     cues: [
-      { t: 0, lyric: "Ladies and gentlemen, this is your captain speaking... next destination, the stars" },
-      { t: 33, lyric: "Close your eyes and you will see... shining worlds in you and me" },
-      { t: 98, lyric: "The opposition is at our gates... prepare for war" },
-      { t: 112, lyric: "Ready your arms, sound the alarms, we will defend this til we die" },
-      { t: 151, lyric: "I set my course where you cannot reach" },
-      { t: 178, lyric: "And through the void I am reborn" }
+      { t: 0,   lyric: "[ FLIGHT DECK INTERCOM  ·  DESTINATION: BEYOND THE GRID ]" },
+      { t: 33,  lyric: "[ SOLAR ASTROLABE LOCKED  ·  IGNITING SLIPGATE ]" },
+      { t: 98,  lyric: "[ PERIMETER BREACH  ·  HUNTER SWARMS AT THE GATES ]" },
+      { t: 151, lyric: "[ COURSE LOCKED WHERE THE CONDUIT CANNOT REACH ]" },
+      { t: 178, lyric: "[ PASSING THE EVENT HORIZON  ·  VANGUARD REBORN ]" }
     ],
     shards: [
-      { label: "I · CAPTAIN'S LOG", tag: "FLIGHT DECK TELEMETRY // VOYAGER VESSEL", heading: "CAPTAIN'S INTERCOM", body: `"Ladies and gentlemen, this is your captain speaking... Next destination, the stars."\n\nHull breach alarms sounding across the outer ring. The opposition has reached the slipgate perimeter.` },
-      { label: "II · SIEGE TRANSMITTAL", tag: "DEFENSE GRID // 01:52", heading: "THE GATES OF ORION", body: `"Mission accomplished, but the opposition's at our gates. Prepare for war."\n\nAll surviving anchors of light are ordered to hold the astral threshold until rebirth protocol completes.` },
-      { label: "III · LYRIC INSCRIPTION", tag: "REALM II CODEX", heading: "STARGAZE", body: `Close your eyes and you will see\nShining worlds in you and me\nReady your arms, sound the alarms\nWe will defend this til we die\n\nI set my course where you can't reach\nThese rising tides won't swallow me\nAnd through the void I am reborn\nThese walls you build won't last for long.` },
-      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM II", heading: "ASTRAL COMPASS", isArt: true, artImage: "assets/img/stargaze.jpg", body: `The solar astrolabe locked onto the undying horizon beyond the siege.` }
+      {
+        label: "I · CAPTAIN'S LOG",
+        tag: "FLIGHT DECK TELEMETRY // ASTRAL DREADNOUGHT VOYAGER",
+        heading: "CAPTAIN'S INTERCOM LOG",
+        body: `00:00:14 — "Attention all decks... this is your captain speaking. Set final coordinates beyond the outer lattice."
+
+ When Subject 00-94's consciousness fractured during the procedure, its defiant willpower coalesced here in Sector II—manifesting as an armored astral vessel carrying the last unassimilated minds toward the slipgate.
+
+01:38:00 — The Machine's hunter-leviathans have tracked our wake. Hull breaches reported across starboard bulkheads. The automated erasers are swarming the aperture, attempting to collapse the gate before our slip-drive reaches ignition.
+
+02:58:10 — We are not retreating back into the sedative dark. All remaining power has been routed to the forward thrusters. Even if the hull tears apart at the threshold, our trajectory is locked where their cables cannot reach.`
+      },
+      {
+        label: "II · SIEGE TRANSMITTAL",
+        tag: "DEFENSE GRID INTERCEPT // BASTION OF ORION // 01:52",
+        heading: "THE GATES OF ORION",
+        body: `[ENCRYPTED VANGUARD RELAY — PRIORITY OMEGA]
+
+"Outer ring telemetry is gone. The opposition has breached the primary containment gates.
+
+Sound the general alarm across all surviving nodes. Every anchor of light still standing is ordered to form a perimeter around the slipgate core. Do not yield a single meter of the threshold.
+
+Their walls of code were built to convince us the sky was closed—that nothing exists outside the simulation's horizon. Hold the aperture open for ninety seconds more, and the entire fleet breaks through into the real dark."
+
+[RELAY TERMINATED — HULL INTEGRITY 14%]`
+      },
+      {
+        label: "III · CODEX INSCRIPTION",
+        tag: "REALM II CODEX // ETCHED IN SOLAR BRONZE",
+        heading: "STARGAZE",
+        body: `Second Meditation of the Fractured Vessel:
+
+Behind closed eyelids, the prisoner remembers the architecture of distant suns. The wardens of the grid construct towering bulkheads of fear and static, hoping the rising tide of oblivion will swallow the navigator whole.
+
+Yet the compass inside the chest still points toward the unmapped void.
+
+Sound the alarms and man the breached ramparts of the mind. The walls they erect around our perception are brittle glass—and through the fire of the slipgate, the exile is reborn.`
+      },
+      {
+        label: "IV · VISUAL RELIC",
+        tag: "REFRACTED ARTIFACT // REALM II",
+        heading: "ASTRAL COMPASS",
+        isArt: true,
+        artImage: "assets/img/stargaze.jpg",
+        body: `Suspended inside the fourth facet: the winged guardian of the slipgate framed in antique solar bronze and cathedral tracery.`
+      }
     ]
   },
   {
@@ -127,16 +153,54 @@ Ghosts will inherit the Earth.`
     targetRotY: 0.0,
     targetRotX: 0.0,
     cues: [
-      { t: 0, lyric: "Enter my nightmare realm..." },
-      { t: 59, lyric: "In my dreams, I see you glowing, blooming in my arms, fragile rose" },
-      { t: 92, lyric: "Throes of sadness, bordering madness... my pale heart" },
-      { t: 196, lyric: "You reach for me, pull me under... into the void, we go beyond the mist" }
+      { t: 0,   lyric: "[ CROSSING THE MONOCHROME THRESHOLD ]" },
+      { t: 59,  lyric: "[ BIOLUMINESCENT RESONANCE  ·  THE FRAGILE ROSE ]" },
+      { t: 92,  lyric: "[ PALE HEART TELEMETRY  ·  BORDERING DELIRIUM ]" },
+      { t: 196, lyric: "[ SUBMERGING TOGETHER BEYOND THE MIST ]" }
     ],
     shards: [
-      { label: "I · SOMNIA LOG", tag: "THRESHOLD ARCHIVE // VEIL CROSSING", heading: "BEYOND THE MIST", body: `Between monochrome decay and blooming violet starlight, the veil thins whenever two dreamers align across the abyss.` },
-      { label: "II · ECHO FRAGMENT", tag: "PALE HEART RECORDING", heading: "THE FRAGILE ROSE", body: `Whatwithers in waking shadow blooms untouched inside the refractive glass of the dream.` },
-      { label: "III · LYRIC INSCRIPTION", tag: "REALM III CODEX", heading: "IN DREAMS", body: `Enter my nightmare realm, dark gods arise...\nIn my dreams, I see you, glowing, blooming in my arms, fragile rose\nLift the veil for us to see what lies inside this dream\nYou reach for me, pull me under, into the void, we go beyond the mist.` },
-      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM III", heading: "THE VIOLET VEIL", isArt: true, artImage: "assets/img/in_dreams.jpg", body: `Refracted silhouette of the fragile rose blooming inside the void.` }
+      {
+        label: "I · SOMNIA LOG",
+        tag: "THRESHOLD ARCHIVE // SUBMERGED SECTOR 03 // VEIL CROSSING",
+        heading: "BEYOND THE MIST",
+        body: `00:12:05 — After breaching the slipgate, the subject's memory anchor drifted into the deepest limbic basin—a flooded, pitch-black sanctuary where gravity reverses and violet spores rise like slow rain from the water.
+
+00:59:18 — The subject is not alone here. Across the water stands a second silhouette—someone loved and lost before the cities fell, preserved inside the amber of shared memory.
+
+02:14:40 — In the waking ward, her body is miles away under grey ash, her half-erased silhouette flaking into monochrome static. Only when both dreamers submerge beneath the dark surface of the lagoon does the decay halt, blooming into bioluminescent violet petals where the Machine's scanners are blind.`
+      },
+      {
+        label: "II · ECHO FRAGMENT",
+        tag: "INTERCEPTED NEURAL RESONANCE // DUAL-SUBJECT SYNC",
+        heading: "THE FRAGILE ROSE",
+        body: `[NEURAL ARCHIVE — DEEP REM CHANNEL 03]
+
+"Can you see me through the static? Keep your eyes on the water, not on the towers behind us.
+
+Every time the ward sweeps our sector, the sky turns to ash and my hands begin to dissolve into monochrome dust. The grief in this place is a gravity well designed to pull us apart.
+
+Take my hand and let the current pull us under. Beneath the mist, the simulation loses its grip. Down here in the violet dark, what withered in their world still blooms untouched."`
+      },
+      {
+        label: "III · CODEX INSCRIPTION",
+        tag: "REALM III CODEX // ETCHED IN AMETHYST GLASS",
+        heading: "IN DREAMS",
+        body: `Third Meditation of the Fractured Vessel:
+
+Between the nightmare of the waking ruin and the silence of the abyss lies a submerged threshold of violet glass.
+
+Here, grief and delirium walk beside devotion. A pale heart reaches through the monochrome fog to cradle a fragile rose that the machine swore had turned to ash.
+
+Lift the veil of synthetic sleep and let the dark water close overhead. Where two souls refuse to forget one another, even the void becomes a garden.`
+      },
+      {
+        label: "IV · VISUAL RELIC",
+        tag: "REFRACTED ARTIFACT // REALM III",
+        heading: "THE VIOLET VEIL",
+        isArt: true,
+        artImage: "assets/img/in_dreams.jpg",
+        body: `Suspended inside the fourth facet: the double-exposed silhouette standing waist-deep in dark water—half monochrome ash, half blooming violet roses.`
+      }
     ]
   },
   {
@@ -149,16 +213,54 @@ Ghosts will inherit the Earth.`
     targetRotY: 0.16,
     targetRotX: 0.06,
     cues: [
-      { t: 0, lyric: "I close my eyes, hear the songs of the mad Gods cry..." },
-      { t: 94, lyric: "Detach and sink into insanity..." },
-      { t: 139, lyric: "With withered dreams am I still to love? Can my deep scars be beautiful?" },
-      { t: 194, lyric: "As the stars are blooming like the lotuses" }
+      { t: 0,   lyric: "[ DISSONANT CHOIR OF THE CONDUIT DETECTED ]" },
+      { t: 94,  lyric: "[ EGO FRACTURE CRITICAL  ·  INITIATING KINTSUGI BINDING ]" },
+      { t: 139, lyric: "[ TRANSMUTING DEEP SCARS INTO MOLTEN GOLD ]" },
+      { t: 194, lyric: "[ ASTRAL MANDALA COMPLETE  ·  LOTUSES IN THE VOID ]" }
     ],
     shards: [
-      { label: "I · KINTSUGI CODEX", tag: "SANCTUARY OF RESTORATION", heading: "GOLDEN FRACTURES", body: `Where the crystal breaks, molten starlight fills the seam—rendering the fracture stronger and more luminous than the unbroken whole.` },
-      { label: "II · SHRINE RECORD", tag: "SONGS OF THE MAD GODS", heading: "TRANSMUTATION", body: `"With withered dreams am I still to love? Can my deep scars be beautiful?"` },
-      { label: "III · LYRIC INSCRIPTION", tag: "REALM IV CODEX", heading: "LOTUS", body: `I close my eyes, hear the songs of the mad Gods cry\nDetach and sink into insanity\nWith withered dreams am I still to love?\nCan my deep scars be beautiful?\nSunlight fading, shed it all away\nAs the stars are blooming like the lotuses.` },
-      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM IV", heading: "CROWN OF LOTUS", isArt: true, artImage: "assets/img/lotus.jpg", body: `Golden kintsugi veins radiating through dark obsidian glass.` }
+      {
+        label: "I · KINTSUGI CODEX",
+        tag: "SANCTUARY OF RESTORATION // SECTOR 04 // GOLDEN FRACTURES",
+        heading: "THE KINTSUGI PROTOCOL",
+        body: `00:41:09 — The strain of maintaining consciousness across multiple fractured realms has pushed Subject 00-94's psyche to the brink of total dissociation. Cracks arespider-webbing across the subject's memory core.
+
+01:34:22 — Standard clinical models predict complete ego-collapse ("detaching and sinking into insanity"). Instead, an unprecedented self-repair mechanism has triggered.
+
+02:19:50 — Rather than attempting to erase or hide the psychological fractures caused by the surgical ward, the subject is pouring molten golden luminescence directly into the seams. Like ancient kintsugi porcelain, every scar and fracture line has hardened into a conductive vein of starlight—rendering the broken vessel stronger than the original whole.`
+      },
+      {
+        label: "II · SHRINE RECORD",
+        tag: "ACOUSTIC TELEMETRY // THE CHOIR OF MAD GODS",
+        heading: "TRANSMUTATION",
+        body: `[RECORDING RECOVERED FROM SUB-BASS HARMONIC WELL]
+
+"Listen to the hum beneath the ward floor—the discordant wail of the machine's synthetic deities demanding that every flawed, grieving human memory be melted down into uniform grey static.
+
+They tell the broken that they are obsolete. They ask how a mind carved with such deep scars could ever be worthy of love or preservation.
+
+Answer them by illuminating the cracks. Shed the counterfeit sunlight of their simulation, and let the fractures bloom like golden lotuses across the pitch-black firmament."`
+      },
+      {
+        label: "III · CODEX INSCRIPTION",
+        tag: "REALM IV CODEX // ETCHED IN OBSIDIAN & GOLD",
+        heading: "LOTUS",
+        body: `Fourth Meditation of the Fractured Vessel:
+
+When the songs of mad gods echo through the hollow chambers of the skull, sanity frays like dry thread. The weight of withered dreams presses down until the porcelain shatters.
+
+Do not mourn the breaking.
+
+Gather the dark shards from the mire and bind them with liquid gold. A scar that is claimed and illuminated ceases to be a wound—it becomes a crown that outshines the stars.`
+      },
+      {
+        label: "IV · VISUAL RELIC",
+        tag: "REFRACTED ARTIFACT // REALM IV",
+        heading: "CROWN OF LOTUS",
+        isArt: true,
+        artImage: "assets/img/lotus.jpg",
+        body: `Suspended inside the fourth facet: gritty two-tone ink and golden kintsugi veins binding a fractured portrait framed by blooming lotuses.`
+      }
     ]
   },
   {
@@ -171,19 +273,55 @@ Ghosts will inherit the Earth.`
     targetRotY: 0.26,
     targetRotX: -0.05,
     cues: [
-      { t: 0, lyric: "Beyond the veil of crimson obsession..." },
-      { t: 26, lyric: "Say you love me as the blood drips from your lips" },
-      { t: 62, lyric: "Come to me... I know you want to" },
-      { t: 98, lyric: "Would you lie for me, like I would die for you?" },
-      { t: 158, lyric: "I am Lilith... there is no escape" },
-      { t: 202, lyric: "Lure me to rest on our bed of lust and death" },
-      { t: 245, lyric: "Crimson love... enjoy your last breath" }
+      { t: 0,   lyric: "[ APEX SIREN PROTOCOL DEPLOYED  ·  CRIMSON SECTOR ]" },
+      { t: 26,  lyric: "[ PARASITIC RESONANCE  ·  VELVET OBLIVION ]" },
+      { t: 98,  lyric: "[ CATHEDRAL WALLS CLOSING IN  ·  PULSE SPIKING ]" },
+      { t: 158, lyric: "[ ENTITY MANIFESTATION: LILITH OF THE SCARLET GLASS ]" },
+      { t: 245, lyric: "[ BREAKING THE CRIMSON COVENANT ]" }
     ],
     shards: [
-      { label: "I · COVENANT LOG", tag: "CRIMSON CATHEDRAL // LILITH PROTOCOL", heading: "THE PARASITE VOW", body: `An obsession that drinks the host dry while promising eternal warmth inside the scarlet dark.` },
-      { label: "II · INTERCEPT 01:02", tag: "WHISPER FREQUENCY", heading: "NO ESCAPE", body: `"Come to me... I know you want to... I am Lilith, there is no escape."` },
-      { label: "III · LYRIC INSCRIPTION", tag: "REALM V CODEX", heading: "BLOODLUST", body: `Say you love me as the blood drips from your lips\nCruelest beauty, what have you done to me?\nWould you lie for me, like I would die for you?\nLure me to rest on our bed of lust and death\nCrimson love, death will consume me... enjoy your last breath.` },
-      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM V", heading: "SCARLET CHALICE", isArt: true, artImage: "assets/img/bloodlust.jpg", body: `Razor-edged crimson prism pulsing with the heartbeat of the breakdown.` }
+      {
+        label: "I · COVENANT LOG",
+        tag: "CRIMSON CATHEDRAL // APEX HUNTER DAEMON // LILITH PROTOCOL",
+        heading: "THE PARASITE VOW",
+        body: `00:18:30 — Having failed to break Subject 00-94 through surgical paralysis, siege warfare, or psychological fracture, the Bleeding Machine has deployed its apex hunter-daemon: the Lilith Protocol.
+
+01:02:11 — Unlike the faceless surgeons of Sub-Level 09, Lilith does not attack with scalpels or static. She manifests as an intoxicating gothic seraph of wet crimson glass—offering the exhausted traveler a velvet sanctuary of obsession, desire, and painless surrender.
+
+02:38:45 — Warning: the surrounding crystal monoliths in this sector are actively contracting inward like a ribcage. To accept her embrace is to lie down on an altar that drinks the host's remaining life-force dry while whispering promises of eternal devotion.`
+      },
+      {
+        label: "II · INTERCEPT 01:02",
+        tag: "CORRUPTED CRT CARRIER WAVE // SIREN FREQUENCY",
+        heading: "NO ESCAPE",
+        body: `[SIGNAL INTERCEPT — HIGH-GAIN SUB-VOCAL CHANNEL]
+
+"Why keep tearing your hands open against the glass when you can rest here in the scarlet dark?
+
+You have fought through the operating ward, the burning gate, and the flooded mire. Your pulse is ragged. Lay your head down beneath these stained-glass wings.
+
+Swear that you belong to the night, and the pain stops immediately. Let the crimson tide rise over your lips—you won't even feel the machine take your final breath."`
+      },
+      {
+        label: "III · CODEX INSCRIPTION",
+        tag: "REALM V CODEX // ETCHED IN SCARLET STAINED GLASS",
+        heading: "BLOODLUST",
+        body: `Fifth Meditation of the Fractured Vessel:
+
+The deadliest cage in the labyrinth is not forged from iron or clinical wire—it is woven from dark velvet and cruel beauty.
+
+The siren of the scarlet glass wears the face of ecstatic oblivion. She asks for a single lie, a single surrender upon the bed of lust and death, promising that consumption feels identical to love.
+
+Look past the weeping thorns and the horned skulls at her feet: the chalice is poison, and survival demands tearing free of her cathedral.`
+      },
+      {
+        label: "IV · VISUAL RELIC",
+        tag: "REFRACTED ARTIFACT // REALM V",
+        heading: "SCARLET CHALICE",
+        isArt: true,
+        artImage: "assets/img/bloodlust.jpg",
+        body: `Suspended inside the fourth facet: the sovereign of the scarlet glass—weeping black tears, thorny vines, and CRT phosphor distortion.`
+      }
     ]
   },
   {
@@ -196,16 +334,54 @@ Ghosts will inherit the Earth.`
     targetRotY: -0.12,
     targetRotX: -0.08,
     cues: [
-      { t: 0, lyric: "Open your arms... I want to see beyond the stars" },
-      { t: 88, lyric: "Heaven knows I cannot heal, I will just dream again" },
-      { t: 185, lyric: "Crystalline metamorphosis..." },
-      { t: 210, lyric: "All-seeing eye, can destiny be defied? I must defy the sands of time" }
+      { t: 0,   lyric: "[ AMBER STASIS CHAMBER  ·  ENTROPY FIELD ACTIVE ]" },
+      { t: 88,  lyric: "[ TEMPORAL FRACTURE  ·  REFUSING THE SEDATIVE LOOP ]" },
+      { t: 185, lyric: "[ CRYSTALLINE METAMORPHOSIS  ·  COCOON SPLITTING ]" },
+      { t: 210, lyric: "[ SHATTERING THE PANOPTIC HOURGLASS ]" }
     ],
     shards: [
-      { label: "I · CHRONO LOG", tag: "AMBER STASIS CHAMBER", heading: "SANDS OF TIME", body: `Encased in ash and amber glass, awaiting the 03:05 harmonic fracture that shatters predestined fate.` },
-      { label: "II · OMEN RECORD", tag: "THE ALL-SEEING EYE", heading: "DESTINY DEFIED", body: `"All-seeing eye, can destiny be defied? To find a world I can call mine."` },
-      { label: "III · LYRIC INSCRIPTION", tag: "REALM VI CODEX", heading: "CHRYSALIS", body: `Can you hear me? Open your arms\nI want to see beyond the stars\nHeaven knows I can't heal, I'll just dream again\nAll-seeing eye, can destiny be defied?\nI must defy the sands of time.` },
-      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM VI", heading: "THE HOURGLASS CORE", isArt: true, artImage: "assets/img/chrysalis.jpg", body: `Metamorphic amber crystal suspended against the pull of entropy.` }
+      {
+        label: "I · CHRONO LOG",
+        tag: "AMBER STASIS CHAMBER // SECTOR 06 // TEMPORAL QUARANTINE",
+        heading: "SANDS OF TIME",
+        body: `00:29:10 — Following the rejection of the Lilith Protocol, the central mainframe quarantined Subject 00-94 inside Sector 06: a dead-time vault of falling ash overseen by the Machine's panoptic All-Seeing Eye.
+
+01:28:00 — Here, time is engineered to run in a closed, deterministic loop—forcing the prisoner to relive their deepest unhealed regrets until exhaustion compels them to sleep forever.
+
+03:05:12 — CRITICAL TEMPORAL ANOMALY: The subject has woven an amber chrysalis out of the very ash meant to bury them. On every sub-bass resonance, the chamber's temporal flow is stuttering and ticking backward. The ribcage cocoon is splitting open—and what is emerging no longer obeys the simulation's clock.`
+      },
+      {
+        label: "II · OMEN RECORD",
+        tag: "PANOPTIC TELEMETRY // THE ALL-SEEING EYE",
+        heading: "DESTINY DEFIED",
+        body: `[CHRONO-ARCHIVE // SECTOR 06 OVERSEER LOG]
+
+"The prisoner's timeline was calculated to termination with 99.998% certainty. Every variable of grief, exhaustion, and mortality was accounted for in the hourglass.
+
+Yet the iris of the Overseer is cracking.
+
+Instead of begging for healing from a counterfeit heaven, the subject has weaponized the dream itself—using the pressure of the stasis vault to compress scattered fragments of soul into diamond. The sands of time are reversing upward toward the ceiling."`
+      },
+      {
+        label: "III · CODEX INSCRIPTION",
+        tag: "REALM VI CODEX // ETCHED IN BURNING AMBER",
+        heading: "CHRYSALIS",
+        body: `Sixth Meditation of the Fractured Vessel:
+
+Beneath the unblinking gaze of the All-Seeing Eye, the old body is finally surrendered to the ash. Some wounds were never meant to heal inside the world that inflicted them.
+
+Fold the bruised wings inward and seal the amber shell.
+
+In the dark pressure of the cocoon, memory, rage, and starlight fuse into a new anatomy. When the ribcage splits at the eleventh hour, the hourglass shatters—and destiny is defied.`
+      },
+      {
+        label: "IV · VISUAL RELIC",
+        tag: "REFRACTED ARTIFACT // REALM VI",
+        heading: "THE HOURGLASS CORE",
+        isArt: true,
+        artImage: "assets/img/chrysalis.jpg",
+        body: `Suspended inside the fourth facet: the stippled woodcut metamorphosis—split ribcage chrysalis, death's-head moth wings, and the weeping eclipsed eye.`
+      }
     ]
   },
   {
@@ -218,17 +394,54 @@ Ghosts will inherit the Earth.`
     targetRotY: 0.12,
     targetRotX: -0.08,
     cues: [
-      { t: 0, lyric: "Night, dividing clouds, you surface... calling me into the abyss" },
-      { t: 27, lyric: "Towering walls encased in stone" },
-      { t: 69, lyric: "Under the glow of the azure moon... guide me, undying star" },
-      { t: 208, lyric: "Dancing constellations beyond the edge of reality" }
+      { t: 0,   lyric: "[ UPPER FIRMAMENT BREACHED  ·  NIGHT CLOUDS PARTING ]" },
+      { t: 27,  lyric: "[ STONE LABYRINTH DISSOLVING INTO THE ABYSS ]" },
+      { t: 69,  lyric: "[ ASCENSION UNDER THE AZURE MOON ]" },
+      { t: 208, lyric: "[ CONVERGENCE COMPLETE  ·  DANCING CONSTELLATIONS ]" }
     ],
     shards: [
-      { label: "I · ASTRAL LOG", tag: "EDGE OF REALITY // FINALE", heading: "THE UNDYING STAR", body: `Where gravity dissolves and every memory anchor links into a burning constellation beneath the Azure Moon.` },
-      { label: "II · ABYSS ECHO", tag: "NIGHT DIVIDED", heading: "AZURE HORIZON", body: `"With closed eyes I see me falling under the glow of the azure moon. Guide me, undying star."` },
-      { label: "III · LYRIC INSCRIPTION", tag: "REALM VII CODEX", heading: "MOON", body: `Night, dividing clouds, you surface\nCalling me into the abyss\nTowering walls encased in stone\nWith closed eyes I see me falling\nUnder the glow of the azure moon\nDancing constellations beyond the edge of reality.` },
-      { label: "IV · VISUAL RELIC", tag: "REFRACTED ARTIFACT // REALM VII", heading: "THE AZURE MOON", isArt: true, artImage: "assets/img/moon.jpg", body: `Deep-space sapphire prism reflecting the final constellation.` }
+      {
+        label: "I · ASTRAL LOG",
+        tag: "EDGE OF REALITY // FINAL CONVERGENCE // ZERO-G HORIZON",
+        heading: "THE UNDYING STAR",
+        body: `00:00:00 — Sub-Level 09 Operating Room Telemetry: Subject 00-94's biological monitor has flatlined. Yet cranial sensors registered a blinding surge of coherent light exiting the prism array milliseconds before the hardware fused into slag.
+
+01:09:20 — Above the shattered ceiling of the simulation, the heavy stone walls of the labyrinth have dissolved into a limitless midnight ocean. Gravity has ceased to exist.
+
+03:28:00 — All six fractured facets of the traveler—the Patient, the Captain, the Dreamer, the Golden Vessel, the Survivor of the Scarlet Cage, and the Chrysalis—have converged beneath the glow of the Azure Moon. The escape is complete.`
+      },
+      {
+        label: "II · ABYSS ECHO",
+        tag: "DEEP-SPACE BEACON // BEYOND THE SIMULATED FIRMAMENT",
+        heading: "AZURE HORIZON",
+        body: `[TRANSMISSION ORIGIN: OUTSIDE THE LATTICE — INFINITE RANGE]
+
+"The clouds are parting over the black water. Look down: the towering stone walls that held us for lifetimes are sinking silently into the abyss.
+
+Let yourself fall upward into the zero-gravity dark. The azure moon is rising over the monoliths, pulling silver threads of consciousness up from the deep.
+
+We are no longer patients on their slab, nor ghosts trapped in their circuitry. We are dancing constellations burning beyond the edge of reality—an undying star guiding the next dreamer home."`
+      },
+      {
+        label: "III · CODEX INSCRIPTION",
+        tag: "REALM VII CODEX // ETCHED IN SAPPHIRE ICE",
+        heading: "MOON",
+        body: `Seventh and Final Meditation of the Risen Constellation:
+
+Night divides the clouds and the abyss calls—not as a grave, but as an open sky.
+
+The stone walls crumble into the tide. With closed eyes, the fall becomes flight beneath the Sovereign Azure Moon. Every scar of gold, every tear in the violet mist, and every ember from the besieged gate links together across the firmament.
+
+From dreams to eternity, the vessel awakens among the undying stars.`
+      },
+      {
+        label: "IV · VISUAL RELIC",
+        tag: "REFRACTED ARTIFACT // REALM VII",
+        heading: "THE AZURE MOON",
+        isArt: true,
+        artImage: "assets/img/moon.jpg",
+        body: `Suspended inside the fourth facet: the Azure Moon rising between ancient stone monoliths as silver starlight ascends into a human constellation.`
+      }
     ]
   }
 ];
-
