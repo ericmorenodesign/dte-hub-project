@@ -82,7 +82,7 @@ html, body {
   filter: blur(0px);
 }
 
-/* Etched-Inside-Crystal Projection with Audio-Reactive Signal Interference */
+/* Clean, Etched-Inside-Crystal Projection */
 .crystal-projection {
   position: fixed;
   inset: 0;
@@ -93,10 +93,11 @@ html, body {
   justify-content: center;
   align-items: center;
   padding: 8vh 6vw;
+  background: radial-gradient(circle at center, rgba(2, 2, 4, 0.55) 0%, rgba(2, 2, 4, 0.0) 75%);
   opacity: 0;
-  filter: blur(12px);
-  transform: scale(0.94);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: blur(10px);
+  transform: scale(0.96);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .crystal-projection.manifest {
@@ -106,67 +107,47 @@ html, body {
   pointer-events: auto;
 }
 
-/* Subtle scanline interference veil during transmission playback */
-.crystal-projection.manifest::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(255, 255, 255, 0.0) 0px,
-    rgba(255, 255, 255, 0.0) 2px,
-    rgba(136, 224, 184, var(--static-alpha, 0.015)) 3px,
-    rgba(0, 0, 0, 0.12) 4px
-  );
-  opacity: calc(0.35 + var(--static-burst, 0) * 0.65);
-  mix-blend-mode: screen;
-}
-
 .projection-inner {
-  max-width: 650px;
+  max-width: 640px;
   width: 100%;
   text-align: center;
   position: relative;
   padding: 20px;
-  transform: translate(var(--glitch-x, 0px), var(--glitch-y, 0px)) skewX(var(--glitch-skew, 0deg));
 }
 
 .projection-tag {
   font-family: 'Cinzel', serif;
-  font-size: 0.65rem;
+  font-size: 0.64rem;
   font-weight: 700;
   letter-spacing: 0.55em;
-  color: var(--node-rim, #88e0b8);
-  text-shadow: 0 0 18px var(--node-glow, rgba(136, 224, 184, 0.6));
+  color: var(--node-rim, #78d8b0);
+  text-shadow: 0 0 16px var(--node-glow, rgba(120, 216, 176, 0.5));
   margin-bottom: 14px;
   text-transform: uppercase;
 }
 
 .projection-heading {
   font-family: 'Cinzel', serif;
-  font-size: clamp(1.2rem, 2.2vw, 1.85rem);
+  font-size: clamp(1.2rem, 2.1vw, 1.75rem);
   font-weight: 700;
-  letter-spacing: 0.38em;
+  letter-spacing: 0.36em;
   color: #ffffff;
   text-shadow:
-    calc(-2px - var(--chroma-shift, 0px)) 0 12px rgba(255, 45, 95, 0.55),
-    calc(2px + var(--chroma-shift, 0px)) 0 12px rgba(0, 235, 255, 0.55),
-    0 0 32px var(--node-glow, rgba(255, 255, 255, 0.5));
-  margin-bottom: 26px;
+    calc(-1px - var(--chroma-shift, 0px)) 0 10px rgba(255, 60, 100, 0.32),
+    calc(1px + var(--chroma-shift, 0px)) 0 10px rgba(0, 230, 255, 0.32),
+    0 0 28px var(--node-glow, rgba(255, 255, 255, 0.45));
+  margin-bottom: 24px;
 }
 
 .projection-body {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.04rem, 1.35vw, 1.26rem);
+  font-size: clamp(1.05rem, 1.35vw, 1.25rem);
   line-height: 1.85;
-  letter-spacing: 0.06em;
-  color: rgba(235, 232, 245, 0.90);
+  letter-spacing: 0.05em;
+  color: rgba(238, 236, 245, 0.92);
   text-shadow:
-    calc(-1px - var(--chroma-shift, 0px) * 0.4) 0 8px rgba(255, 45, 95, 0.32),
-    calc(1px + var(--chroma-shift, 0px) * 0.4) 0 8px rgba(0, 235, 255, 0.32),
-    0 0 14px rgba(0, 0, 0, 0.95),
-    0 0 28px var(--node-glow, rgba(255, 255, 255, 0.35));
+    0 0 16px rgba(0, 0, 0, 0.98),
+    0 0 28px var(--node-glow, rgba(255, 255, 255, 0.28));
   max-height: 54vh;
   overflow-y: auto;
   scrollbar-width: none;
@@ -179,8 +160,8 @@ html, body {
 }
 
 .projection-art-frame {
-  width: min(360px, 70vw);
-  height: min(360px, 70vw);
+  width: min(340px, 68vw);
+  height: min(340px, 68vw);
   margin: 0 auto 18px auto;
   position: relative;
   display: none;
@@ -195,14 +176,14 @@ html, body {
 .projection-art-canvas {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 0 30px var(--node-glow, rgba(136, 224, 184, 0.45)));
+  filter: drop-shadow(0 0 26px var(--node-glow, rgba(120, 216, 176, 0.4)));
 }
 
 .projection-dismiss {
   margin-top: 28px;
   font-family: 'Cinzel', serif;
-  font-size: 0.62rem;
-  letter-spacing: 0.5em;
+  font-size: 0.60rem;
+  letter-spacing: 0.48em;
   color: rgba(200, 196, 210, 0.45);
   text-transform: uppercase;
   cursor: pointer;
@@ -214,7 +195,7 @@ html, body {
   text-shadow: 0 0 14px #ffffff;
 }
 
-/* Floating 3D Shard Labels inside the Quantum Chamber */
+/* Subtle 3D Shard Labels inside the Quantum Chamber */
 .shard-labels-layer {
   position: fixed;
   inset: 0;
@@ -226,10 +207,10 @@ html, body {
   position: absolute;
   transform: translate(-50%, -50%);
   font-family: 'Cinzel', serif;
-  font-size: 0.62rem;
+  font-size: 0.60rem;
   font-weight: 700;
   letter-spacing: 0.42em;
-  color: rgba(220, 218, 230, 0.45);
+  color: rgba(220, 218, 230, 0.42);
   text-shadow: 0 0 12px rgba(0, 0, 0, 0.95);
   white-space: nowrap;
   transition: color 0.4s ease, opacity 0.5s ease, text-shadow 0.4s ease, transform 0.4s ease;
@@ -242,8 +223,8 @@ html, body {
 
 .shard-label.hovered {
   color: #ffffff;
-  transform: translate(-50%, -50%) scale(1.12);
-  text-shadow: 0 0 16px var(--node-glow, #ffffff), 0 0 28px var(--node-glow, #ffffff);
+  transform: translate(-50%, -50%) scale(1.1);
+  text-shadow: 0 0 16px var(--node-glow, #ffffff);
 }
 
 /* Bold Roman Numerals I - VII */
@@ -261,7 +242,7 @@ html, body {
 }
 
 body.realm-breached .roman-nav {
-  opacity: 0.32;
+  opacity: 0.35;
 }
 
 body.realm-breached .roman-nav:hover {
@@ -372,7 +353,7 @@ body.realm-breached .roman-nav:hover {
     <span class="whisper-lyric" id="whisperLyric"></span>
   </div>
 
-  <!-- Subtle 3D labels hovering over the 4 Refractive Memory Shards when inside the Quantum Realm -->
+  <!-- Subtle 3D labels hovering below the 4 Memory Shards inside the Quantum Chamber -->
   <div class="shard-labels-layer" id="shardLabelsLayer">
     <div class="shard-label" id="shardLabel0"></div>
     <div class="shard-label" id="shardLabel1"></div>
@@ -389,7 +370,7 @@ body.realm-breached .roman-nav:hover {
         <canvas class="projection-art-canvas" id="projArtCanvas" width="512" height="512"></canvas>
       </div>
       <div class="projection-body" id="projBody"></div>
-      <div class="projection-dismiss" id="projDismiss">[ CLICK ANYWHERE OR PRESS ESC TO RELEASE FACET ]</div>
+      <div class="projection-dismiss" id="projDismiss">[ CLICK ANYWHERE OR PRESS ESC TO RETURN ]</div>
     </div>
   </div>
 

@@ -25,7 +25,7 @@ export class AudioNexus {
 
     this.initListeners();
     setTimeout(() => {
-      this.showTitleWhisper("DRAG CRYSTAL TO SCRY THE VOID  ·  CLICK TO ENTER REALM I", 5200);
+      this.showTitleWhisper("CLICK TO AWAKEN SOUND  ·  SCROLL OR DOUBLE-CLICK TO ENTER CRYSTAL", 5200);
     }, 500);
   }
 
@@ -210,3 +210,4 @@ export class AudioNexus {
     });
   }
 }
+
